@@ -4,4 +4,4 @@ Platform berbasis website yang mengintegrasikan model AI untuk menyediakan saran
 ## Susunan Kelompok
 - **Ketua**: 
 - **Anggota 1**: 
-- **Anggota 2**:
+- **Anggota 2**: Muhammad Zufar Syaafi' - 23/517479/TK/56923
