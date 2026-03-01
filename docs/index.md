@@ -8,6 +8,6 @@ Platform berbasis website yang mengintegrasikan model AI untuk menyediakan saran
 * **Anggota 1**: Muhammad Hafidz Al Farisi - 23/519650/TK/57256
 * **Anggota 2**: Muhammad Zufar Syaafi' - 23/517479/TK/56923
 
-## **Daftar Modul**
+## Daftar Modul
 - [Modul 1](./modul1.html)
 - [Modul 2](./modul2.html)
