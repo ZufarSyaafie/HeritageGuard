@@ -4,15 +4,7 @@ title: Modul 1
 description: Modul 1 Pembentukan Kelompok & Perumusan Masalah 
 ---
 
-# Pembentukan Kelompok & Perumusan Masalah
-
-**Laboratorium Jaringan Komputer dan Aplikasi Terdistribusi** **Senior Project (Jaringan Komputer, Komputasi Awan, dan AI)** **Worksheet Pertemuan 1 (Kelompok)**
-
----
-
 ## LAB 1.1: PEMBENTUKAN KELOMPOK
-
-Diskusikan dengan anggota dalam satu tim untuk menentukan peran dari setiap anggota, pembagian peran harus seimbang dengan mempertimbangkan kemampuan anggota.
 
 | Nama | NIM | Peran |
 | :--- | :--- | :--- |
