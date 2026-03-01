@@ -4,7 +4,7 @@ title: Modul 1
 description: Modul 1 Pembentukan Kelompok & Perumusan Masalah 
 ---
 
-## LAB 1.1: PEMBENTUKAN KELOMPOK
+## Pembentukan Kelompok
 
 | Nama | NIM | Peran |
 | :--- | :--- | :--- |
@@ -14,7 +14,7 @@ description: Modul 1 Pembentukan Kelompok & Perumusan Masalah
 
 ---
 
-## LAB 1.2: PERUMUSAN PERMASALAHAN
+## Perumusan Permasalahan
 
 **a. Nama Kelompok** Sidat Sawah
 
@@ -56,7 +56,7 @@ Untuk mendeteksi kerusakan spesifik seperti retakan (*cracking*), pengelupasan (
 
 ---
 
-**e. Analisis Kompetitor (Minimal 3 Kompetitor)**
+**e. Analisis Kompetitor**
 
 **Kompetitor 1: T2D2**
 
