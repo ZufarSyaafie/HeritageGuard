@@ -79,6 +79,7 @@ Untuk mendeteksi kerusakan spesifik seperti retakan (*cracking*), pengelupasan (
 | **Key Competitive Advantage & Unique Value** | Model AI mereka dilatih dan divalidasi langsung oleh insinyur sipil kelas dunia, sehingga klasifikasinya sangat akurat secara teknis. |
 
 **Kompetitor 2: Resensys**
+
 | Atribut | Keterangan |
 | :--- | :--- |
 | **Nama Kompetitor** | Resensys |
@@ -90,6 +91,7 @@ Untuk mendeteksi kerusakan spesifik seperti retakan (*cracking*), pengelupasan (
 | **Key Competitive Advantage & Unique Value** | Teknologi hemat energi yang memungkinkan sensor dipasang sekali dan ditinggalkan selama satu dekade. Ini sangat cocok dengan cagar budaya yang sulit diakses untuk *maintenance* rutin. |
 
 **Kompetitor 3: Move Solutions**
+
 | Atribut | Keterangan |
 | :--- | :--- |
 | **Nama Kompetitor** | Move Solutions |
