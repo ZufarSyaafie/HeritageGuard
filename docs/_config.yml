@@ -1,3 +1,20 @@
-theme: jekyll-theme-cayman
+remote_theme: just-the-docs/just-the-docs
 title: Heritage Guard
 description: Platform berbasis website yang mengintegrasikan model AI untuk menyediakan sarana pemantauan otomasi dan pelaporan kerusakan cagar budaya yang cepat, akurat, dan terintegrasi
+
+# Just the Docs configuration
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+
+# Footer content
+footer_content: "Copyright &copy; 2026 HeritageGuard Team"
+
+# Back to top link
+back_to_top: true
+back_to_top_text: "Back to top"
+
+# Aux links for the upper right navigation
+aux_links:
+  "HeritageGuard on GitHub":
+    - "//github.com/ZufarSyaafie/HeritageGuard"
