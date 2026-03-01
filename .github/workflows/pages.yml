@@ -32,7 +32,8 @@ jobs:
         uses: actions/configure-pages@v4
       
       - name: Build with Jekyll
-        run: bundle exec jekyll build --source ./docs --destination ./_site --baseurl "/HeritageGuard"
+        working-directory: ./docs
+        run: bundle exec jekyll build --destination ../_site --baseurl "/HeritageGuard"
         env:
           JEKYLL_ENV: production
       
