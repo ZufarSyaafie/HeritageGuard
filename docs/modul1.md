@@ -1,6 +1,6 @@
 ---
 layout: default
-title: Modul 1
+title: Modul 1 - Perumusan Masalah
 description: Modul 1 Pembentukan Kelompok & Perumusan Masalah
 nav_order: 2
 ---
