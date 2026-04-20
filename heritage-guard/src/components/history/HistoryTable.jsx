@@ -1,45 +1,14 @@
 import { Eye, FileText } from 'lucide-react';
 
-const historyData = [
-  {
-    id: "HG-2024-001",
-    image: "https://images.unsplash.com/photo-1590050752117-23a9d7f26a83?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Borobudur",
-    subLocation: "Sektor B - Relief Dasar",
-    date: "12 Okt 2024",
-    status: "KRITIS",
-    statusColor: "text-red-600 bg-red-50 border-red-100"
-  },
-  {
-    id: "HG-2024-002",
-    image: "https://images.unsplash.com/photo-1624388481491-c423c713b5d2?q=80&w=100&auto=format&fit=crop",
-    location: "Museum Fatahillah",
-    subLocation: "Pilar Utama - Sayap Barat",
-    date: "10 Okt 2024",
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
-  },
-  {
-    id: "HG-2024-003",
-    image: "https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Prambanan",
-    subLocation: "Pagar Luar - Area Parkir",
-    date: "08 Okt 2024",
-    status: "AMAN",
-    statusColor: "text-green-600 bg-green-50 border-green-100"
-  },
-  {
-    id: "HG-2024-004",
-    image: "https://images.unsplash.com/photo-1579446210852-6693a778e351?q=80&w=100&auto=format&fit=crop",
-    location: "Benteng Vredeburg",
-    subLocation: "Dinding Selatan - Parit Utama",
-    date: "05 Okt 2024",
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
+export default function HistoryTable({ data = [] }) {
+  if (data.length === 0) {
+    return (
+      <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-20 text-center">
+        <p className="text-gray-400 font-medium">Tidak ada data histori ditemukan.</p>
+      </div>
+    );
   }
-];
 
-export default function HistoryTable() {
   return (
     <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden">
       <div className="overflow-x-auto">
@@ -55,7 +24,7 @@ export default function HistoryTable() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-50">
-            {historyData.map((row) => (
+            {data.map((row) => (
               <tr key={row.id} className="hover:bg-gray-50/50 transition-colors group">
                 <td className="px-8 py-5">
                   <span className="text-sm font-extrabold text-primary tracking-tight">{row.id}</span>
