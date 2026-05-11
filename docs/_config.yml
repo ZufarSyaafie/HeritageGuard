@@ -1,5 +1,11 @@
 remote_theme: just-the-docs/just-the-docs
 
+url: "https://zufarsyaafie.github.io"
+baseurl: "/HeritageGuard"
+
+plugins:
+  - jekyll-remote-theme
+
 exclude:
   - superpowers/
 title: Heritage Guard

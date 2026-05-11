@@ -16,7 +16,7 @@ import {
 import useScanStore from "@/store/useScanStore";
 import ScanCanvas from "./ScanCanvas";
 
-const API_URL = "https://mhfzalfrs-heritageguard.hf.space/predict";
+const API_URL = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL;
 
 function normalizeDetections(data) {
 	if (Array.isArray(data)) {
@@ -116,6 +116,10 @@ export default function UploadZone() {
 
 	const handleSubmit = async () => {
 		if (!imageFile || !buildingName.trim() || !location.trim()) return;
+		if (!API_URL) {
+			setScanError("Endpoint analisis belum dikonfigurasi.");
+			return;
+		}
 		setMeta({
 			buildingName: buildingName.trim(),
 			location: location.trim(),
