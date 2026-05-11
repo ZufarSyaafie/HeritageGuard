@@ -1,9 +1,9 @@
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
-import { Search, ChevronDown, Filter, Check, X } from 'lucide-react';
+import { Search, ChevronDown, Filter, Check } from 'lucide-react';
 
-export default function HistoryFilters() {
+export default function HistoryFilters({ onFilterChange, onSearchChange }) {
   const timeOptions = ['Semua Waktu', 'Hari Ini', 'Minggu Ini', 'Bulan Ini', 'Tahun Ini'];
   const statusOptions = ['Semua Status', 'Kritis', 'Menengah', 'Aman'];
   const sortOptions = ['Terbaru', 'Terlama', 'Lokasi A-Z', 'Lokasi Z-A'];
@@ -17,6 +17,7 @@ export default function HistoryFilters() {
           <input 
             type="text" 
             placeholder="Cari ID Inspeksi atau Lokasi..." 
+            onChange={(e) => onSearchChange(e.target.value)}
             className="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-blue-100/50 rounded-2xl py-4 pl-14 pr-6 text-sm outline-none transition-all font-medium"
           />
         </div>
@@ -26,10 +27,12 @@ export default function HistoryFilters() {
           <SelectFilter 
             label="Bulan Ini" 
             options={timeOptions} 
+            onChange={(val) => onFilterChange('time', val)}
           />
           <SelectFilter 
             label="Semua Status" 
             options={statusOptions} 
+            onChange={(val) => onFilterChange('status', val)}
           />
           
           <SelectFilter 
@@ -37,6 +40,7 @@ export default function HistoryFilters() {
             options={sortOptions} 
             isIconOnly 
             align="right"
+            onChange={(val) => onFilterChange('sort', val)}
           />
         </div>
       </div>
@@ -44,7 +48,7 @@ export default function HistoryFilters() {
   );
 }
 
-function SelectFilter({ label, icon, options = [], isIconOnly = false, align = 'left' }) {
+function SelectFilter({ label, icon, options = [], isIconOnly = false, align = 'left', onChange }) {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(label || options[0]);
   const dropdownRef = useRef(null);
@@ -63,6 +67,12 @@ function SelectFilter({ label, icon, options = [], isIconOnly = false, align = '
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen]);
+
+  const handleSelect = (option) => {
+    setSelected(option);
+    setIsOpen(false);
+    if (onChange) onChange(option);
+  };
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -105,10 +115,7 @@ function SelectFilter({ label, icon, options = [], isIconOnly = false, align = '
         {options.map((option) => (
           <button
             key={option}
-            onClick={() => {
-              if (!isIconOnly) setSelected(option);
-              setIsOpen(false);
-            }}
+            onClick={() => handleSelect(option)}
             className={`w-full flex items-center justify-between px-5 py-3 text-sm font-medium transition-colors ${
               selected === option && !isIconOnly
               ? 'bg-blue-50 text-primary' 

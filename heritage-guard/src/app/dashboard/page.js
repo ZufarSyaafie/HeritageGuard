@@ -18,17 +18,6 @@ export default function DashboardPage() {
             Visualisasi deteksi anomali struktural menggunakan computer vision YOLOv8 untuk preservasi situs cagar budaya.
           </p>
         </div>
-        
-        <div className="flex items-center gap-4">
-          <button className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl transition-all shadow-sm active:scale-95 text-sm">
-            <Share2 size={18} />
-            Bagikan
-          </button>
-          <button className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-md active:scale-95 text-sm">
-            <FileDown size={18} />
-            Download PDF
-          </button>
-        </div>
       </div>
 
       {/* Main Grid */}

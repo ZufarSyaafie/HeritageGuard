@@ -1,6 +1,24 @@
+"use client";
+
 import { Eye, FileText } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function HistoryTable({ data = [] }) {
+  const router = useRouter();
+
+  const handleViewDetail = (id) => {
+    // Navigasi ke halaman detail (simulasi)
+    console.log(`Navigating to detail: ${id}`);
+    alert(`Membuka detail untuk Inspeksi: ${id}`);
+    // router.push(`/dashboard/histori/${id}`);
+  };
+
+  const handleDownloadPDF = (id) => {
+    // Simulasi download PDF
+    console.log(`Downloading PDF for: ${id}`);
+    alert(`Menyiapkan unduhan PDF untuk ID: ${id}...\nLaporan sedang diproses.`);
+  };
+
   if (data.length === 0) {
     return (
       <div className="bg-white rounded-3xl border border-gray-100 shadow-sm p-20 text-center">
@@ -52,8 +70,16 @@ export default function HistoryTable({ data = [] }) {
                 </td>
                 <td className="px-8 py-5">
                   <div className="flex items-center justify-end gap-3">
-                    <ActionButton icon={<Eye size={18} />} title="Lihat Detail" />
-                    <ActionButton icon={<FileText size={18} />} title="Unduh PDF" />
+                    <ActionButton 
+                      icon={<Eye size={18} />} 
+                      title="Lihat Detail" 
+                      onClick={() => handleViewDetail(row.id)}
+                    />
+                    <ActionButton 
+                      icon={<FileText size={18} />} 
+                      title="Unduh PDF" 
+                      onClick={() => handleDownloadPDF(row.id)}
+                    />
                   </div>
                 </td>
               </tr>
@@ -65,9 +91,10 @@ export default function HistoryTable({ data = [] }) {
   );
 }
 
-function ActionButton({ icon, title }) {
+function ActionButton({ icon, title, onClick }) {
   return (
     <button 
+      onClick={onClick}
       className="p-2.5 text-gray-400 hover:text-primary hover:bg-blue-50 rounded-xl transition-all outline-none"
       title={title}
     >
