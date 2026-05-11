@@ -14,7 +14,7 @@ export default function ReportHeader({ assetMeta, reportId }) {
   return (
     <div className="bg-white rounded-xl border border-gray-200 p-8 print:rounded-none print:border-0 print:p-0">
       <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
-        <Logo size={40} showText href={null} />
+        <Logo size={40} showText href="/" />
         <div className="text-right">
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">No. Laporan</p>
           <p className="text-sm font-black text-gray-900 mt-0.5">{reportId}</p>
