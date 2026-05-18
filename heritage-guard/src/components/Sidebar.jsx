@@ -1,27 +1,58 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Logo from './Logo';
-import { 
-  LayoutDashboard, 
-  UploadCloud, 
-  History, 
-  LogOut, 
-  ChevronLeft, 
-  ChevronRight
+import {
+  LayoutDashboard,
+  UploadCloud,
+  History,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  UserCircle,
+  ShieldCheck,
 } from 'lucide-react';
+import { supabase } from '@/utils/supabase';
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(true);
+  const [user, setUser] = useState(null);
   const pathname = usePathname();
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
+  }, []);
+
+  const role = user?.user_metadata?.role || 'user';
 
   const navItems = [
-    { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-    { name: 'Upload Citra', path: '/dashboard/upload', icon: UploadCloud },
-    { name: 'Histori Inspeksi', path: '/dashboard/histori', icon: History },
+    { name: 'Dashboard',        path: '/dashboard',          icon: LayoutDashboard },
+    { name: 'Upload Citra',     path: '/dashboard/upload',   icon: UploadCloud     },
+    { name: 'Histori Inspeksi', path: '/dashboard/histori',  icon: History         },
+    // Menu khusus admin
+    ...(role === 'admin' ? [
+      { name: 'Monitoring Global', path: '/dashboard/admin',       icon: LayoutDashboard },
+      { name: 'Manajemen User',    path: '/dashboard/admin/users', icon: ShieldCheck },
+    ] : []),
+    { name: 'Profil',           path: '/dashboard/profil',   icon: UserCircle      },
   ];
+
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      router.push('/login');
+    } catch (err) {
+      console.error('Error logging out:', err.message);
+    }
+  };
 
   return (
     <aside 
@@ -76,7 +107,10 @@ export default function Sidebar() {
 
       {/* Footer Section */}
       <div className="p-3 border-t border-gray-100">
-        <button className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all">
+        <button 
+          onClick={handleLogout}
+          className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all"
+        >
           <LogOut size={20} />
           {isOpen && <span className="text-sm font-medium">Logout</span>}
         </button>
