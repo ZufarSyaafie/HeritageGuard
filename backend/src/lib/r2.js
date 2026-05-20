@@ -1,4 +1,4 @@
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 function getR2Config() {
@@ -42,6 +42,21 @@ export async function createUploadUrl(key, contentType, expiresIn = 900) {
     uploadUrl: url,
     publicUrl: publicBaseUrl ? `${publicBaseUrl.replace(/\/$/, '')}/${key}` : null,
   }
+}
+
+export async function createObjectAccessUrl(key, expiresIn = 900) {
+  const { bucket, publicBaseUrl } = getR2Config()
+
+  if (publicBaseUrl) {
+    return `${publicBaseUrl.replace(/\/$/, '')}/${key}`
+  }
+
+  const command = new GetObjectCommand({
+    Bucket: bucket,
+    Key: key,
+  })
+
+  return getSignedUrl(createR2Client(), command, { expiresIn })
 }
 
 export async function uploadBuffer(key, body, contentType = 'application/octet-stream') {

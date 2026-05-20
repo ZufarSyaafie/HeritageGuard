@@ -2,11 +2,6 @@
 
 Platform berbasis website yang mengintegrasikan model AI untuk menyediakan sarana pemantauan otomasi dan pelaporan kerusakan cagar budaya yang cepat, akurat, dan terintegrasi
 
-## Struktur Repo
-
-- `heritage-guard/` adalah frontend Next.js
-- `backend/` adalah backend Node.js untuk Supabase dan Cloudflare R2
-
 ## Susunan Kelompok
 
 * **Ketua**: Muhammad Khaira Rahmadya Nauval - 23/521078/TK/57466

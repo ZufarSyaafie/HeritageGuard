@@ -25,8 +25,31 @@ Required variables:
 - `R2_ACCESS_KEY_ID`
 - `R2_SECRET_ACCESS_KEY`
 - `R2_BUCKET`
+- `HF_INFERENCE_URL` optional, defaults to the provided Hugging Face Space endpoint
 
 Optional:
 
 - `PORT` defaults to `4000`
 - `R2_PUBLIC_BASE_URL` if you want public image URLs returned after upload
+
+## Inference Endpoint
+
+`POST /api/inference` accepts `multipart/form-data` with:
+
+- `file` required image upload
+- `asset_id` optional existing asset UUID
+- `asset_name`, `asset_location`, `asset_description` optional fallback asset data
+- `user_id` optional existing custom user UUID
+- `user_full_name`, `user_email` optional fallback user data
+- `model_name`, `model_version` optional AI model metadata
+- `device_info`, `weather_condition`, `temperature` optional inspection metadata
+
+The backend will:
+
+1. upload the original image to R2
+2. call the Hugging Face model endpoint
+3. store the detections report in R2
+4. create the `INSPECTIONS` row in Supabase
+5. insert rows into `DETECTIONS` and `ANALYSIS_SUMMARIES`
+
+The response includes the inspection row plus R2 access URLs for the image and report.

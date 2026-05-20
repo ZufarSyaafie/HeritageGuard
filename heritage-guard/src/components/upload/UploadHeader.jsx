@@ -5,7 +5,7 @@ export default function UploadHeader() {
         Upload Citra Inspeksi
       </h1>
       <p className="text-lg text-gray-500 max-w-2xl leading-relaxed">
-        Unggah foto struktur bangunan cagar budaya untuk dianalisis oleh model AI YOLOv8 guna mendeteksi kerusakan struktural secara dini.
+        Unggah foto struktur bangunan cagar budaya untuk dianalisis oleh model AI YOLO12 guna mendeteksi kerusakan struktural secara dini.
       </p>
     </header>
   );

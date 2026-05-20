@@ -20,6 +20,17 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
+## Environment Variables
+
+Create a `.env.local` file in this folder for the frontend and fill in your Supabase project values:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+```
+
+If you already configured the backend with `SUPABASE_URL` and `SUPABASE_ANON_KEY`, copy the same values here but keep the `NEXT_PUBLIC_` prefix for the Next.js app.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
