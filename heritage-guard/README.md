@@ -22,11 +22,12 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Environment Variables
 
-Create a `.env.local` file in this folder for the frontend and fill in your Supabase project values:
+Create a `.env` file in this folder for the frontend and fill in your values:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
+NEXT_PUBLIC_HERITAGEGUARD_API_URL=http://localhost:4000/api/inference
 ```
 
 If you already configured the backend with `SUPABASE_URL` and `SUPABASE_ANON_KEY`, copy the same values here but keep the `NEXT_PUBLIC_` prefix for the Next.js app.

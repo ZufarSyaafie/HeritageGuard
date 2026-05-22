@@ -1,4 +1,13 @@
 remote_theme: just-the-docs/just-the-docs
+
+url: "https://zufarsyaafie.github.io"
+baseurl: "/HeritageGuard"
+
+plugins:
+  - jekyll-remote-theme
+
+exclude:
+  - superpowers/
 title: Heritage Guard
 description: Platform berbasis website yang mengintegrasikan model AI untuk menyediakan sarana pemantauan otomasi dan pelaporan kerusakan cagar budaya yang cepat, akurat, dan terintegrasi
 

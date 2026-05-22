@@ -156,7 +156,9 @@ export default function RegisterForm() {
       <div className="flex items-start gap-3 p-4 bg-blue-50/50 rounded-2xl border border-blue-100/50">
         <ShieldCheck className="text-primary shrink-0" size={20} />
         <p className="text-[11px] text-blue-800 leading-relaxed font-medium">
-          Dengan mendaftar, Anda menyetujui <span className="font-bold underline">Ketentuan Layanan</span> dan <span className="font-bold underline">Kebijakan Privasi</span> HeritageGuard.
+          Dengan mendaftar, Anda menyetujui{" "}
+          <span className="font-bold underline">Ketentuan Layanan</span> dan{" "}
+          <span className="font-bold underline">Kebijakan Privasi</span> HeritageGuard.
         </p>
       </div>
 
@@ -181,7 +183,10 @@ export default function RegisterForm() {
       <div className="pt-6 border-t border-gray-50 text-center">
         <p className="text-gray-500 font-medium text-sm">
           Sudah punya akun?{" "}
-          <Link href="/login" className="text-primary font-bold hover:underline inline-flex items-center gap-1 group">
+          <Link
+            href="/login"
+            className="text-primary font-bold hover:underline inline-flex items-center gap-1 group"
+          >
             Masuk di sini
             <ArrowRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
           </Link>

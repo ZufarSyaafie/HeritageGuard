@@ -5,12 +5,12 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const isSupabaseConfigured = Boolean(supabaseUrl && supabaseAnonKey)
 
 const missingEnvError = new Error(
-  'Supabase frontend belum dikonfigurasi. Tambahkan NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY ke heritage-guard/.env.local.'
+  'Supabase frontend belum dikonfigurasi. Tambahkan NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY ke heritage-guard/.env.'
 )
 
 if (!isSupabaseConfigured) {
   console.warn(
-    'Supabase frontend belum dikonfigurasi. Tambahkan NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY ke heritage-guard/.env.local.'
+    'Supabase frontend belum dikonfigurasi. Tambahkan NEXT_PUBLIC_SUPABASE_URL dan NEXT_PUBLIC_SUPABASE_ANON_KEY ke heritage-guard/.env.'
   )
 }
 
