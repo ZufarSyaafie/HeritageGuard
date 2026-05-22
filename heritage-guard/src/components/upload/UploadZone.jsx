@@ -18,15 +18,41 @@ import ScanCanvas from "./ScanCanvas";
 
 const API_URL = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL;
 
+const DETECTION_THEME = {
+  crack: {
+    swatch: "bg-red-500",
+    chip: "bg-red-100 text-red-700",
+    label: "Crack",
+  },
+  spalling: {
+    swatch: "bg-yellow-500",
+    chip: "bg-yellow-100 text-yellow-700",
+    label: "Spalling",
+  },
+  moisture: {
+    swatch: "bg-blue-500",
+    chip: "bg-blue-100 text-blue-700",
+    label: "Moisture",
+  },
+};
+
 function normalizeDetections(data) {
   if (Array.isArray(data)) {
     return data.map((d) => ({
-      label: d.label ?? d.class ?? d.name ?? "unknown",
+      label: d.label ?? d.className ?? d.class_name ?? d.class ?? d.name ?? "unknown",
       confidence: d.confidence ?? d.score ?? 0,
-      x1: d.x1 ?? d.bbox?.[0] ?? 0,
-      y1: d.y1 ?? d.bbox?.[1] ?? 0,
-      x2: d.x2 ?? d.bbox?.[2] ?? 0,
-      y2: d.y2 ?? d.bbox?.[3] ?? 0,
+      x1: d.x1 ?? d.bbox?.x ?? d.bbox?.[0] ?? 0,
+      y1: d.y1 ?? d.bbox?.y ?? d.bbox?.[1] ?? 0,
+      x2:
+        d.x2 ??
+        (d.bbox?.x != null && d.bbox?.width != null ? d.bbox.x + d.bbox.width : undefined) ??
+        d.bbox?.[2] ??
+        0,
+      y2:
+        d.y2 ??
+        (d.bbox?.y != null && d.bbox?.height != null ? d.bbox.y + d.bbox.height : undefined) ??
+        d.bbox?.[3] ??
+        0,
     }));
   }
   const list = data.detections ?? data.predictions ?? data.results ?? [];
@@ -48,21 +74,28 @@ function DetectionChips({ detections }) {
     return acc;
   }, {});
 
-  const COLOR = {
-    crack: "bg-red-100 text-red-700",
-    spalling: "bg-yellow-100 text-yellow-700",
-    moisture: "bg-blue-100 text-blue-700",
-  };
-
   return (
     <div className="flex flex-wrap gap-2 mt-4">
       {Object.entries(counts).map(([label, count]) => (
         <span
           key={label}
-          className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${COLOR[label] ?? "bg-gray-100 text-gray-600"}`}
+          className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${DETECTION_THEME[label]?.chip ?? "bg-gray-100 text-gray-600"}`}
         >
           {count}× {label}
         </span>
+      ))}
+    </div>
+  );
+}
+
+function DetectionLegend() {
+  return (
+    <div className="flex flex-wrap gap-4 text-xs font-semibold text-gray-600">
+      {Object.entries(DETECTION_THEME).map(([key, item]) => (
+        <div key={key} className="flex items-center gap-2">
+          <div className={`w-3 h-3 ${item.swatch} rounded-sm`} />
+          <span>{item.label}</span>
+        </div>
       ))}
     </div>
   );
@@ -146,23 +179,24 @@ export default function UploadZone() {
     useScanStore.setState({ scanStatus: "idle", errorMsg: null });
   };
 
-  if (scanStatus === "uploading") {
-    return (
-      <section className="bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <div className="relative rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 aspect-4/3 flex flex-col items-center justify-center gap-4 animate-pulse">
-          <div className="w-16 h-16 rounded-2xl bg-gray-200" />
-          <div className="space-y-2 w-48 text-center">
-            <div className="h-3 bg-gray-200 rounded-full" />
-            <div className="h-3 bg-gray-200 rounded-full w-3/4 mx-auto" />
-          </div>
-        </div>
-        <div className="mt-6 flex items-center justify-center gap-3 text-primary font-bold">
-          <Loader2 size={20} className="animate-spin" />
-          <span>Model YOLOv12 sedang menganalisis citra…</span>
-        </div>
-      </section>
-    );
-  }
+	// UPLOADING
+	if (scanStatus === "uploading") {
+		return (
+			<section className="bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+				<div className="relative rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 aspect-4/3 flex flex-col items-center justify-center gap-4 animate-pulse">
+					<div className="w-16 h-16 rounded-2xl bg-gray-200" />
+					<div className="space-y-2 w-48 text-center">
+						<div className="h-3 bg-gray-200 rounded-full" />
+						<div className="h-3 bg-gray-200 rounded-full w-3/4 mx-auto" />
+					</div>
+				</div>
+				<div className="mt-6 flex items-center justify-center gap-3 text-primary font-bold">
+					<Loader2 size={20} className="animate-spin" />
+					<span>Model YOLOv12 sedang menganalisis citra…</span>
+				</div>
+			</section>
+		);
+	}
 
   if (scanStatus === "success") {
     return (
@@ -178,6 +212,8 @@ export default function UploadZone() {
         </div>
 
         <ScanCanvas imagePreview={imagePreview} detections={detections} />
+
+        <DetectionLegend />
 
         {detections.length === 0 ? (
           <p className="text-sm text-gray-500 text-center py-2">Tidak ada kerusakan terdeteksi pada citra ini.</p>
