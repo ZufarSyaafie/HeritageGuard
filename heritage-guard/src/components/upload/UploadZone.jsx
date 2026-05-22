@@ -179,23 +179,24 @@ export default function UploadZone() {
     useScanStore.setState({ scanStatus: "idle", errorMsg: null });
   };
 
-  if (scanStatus === "uploading") {
-    return (
-      <section className="bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <div className="relative rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 aspect-4/3 flex flex-col items-center justify-center gap-4 animate-pulse">
-          <div className="w-16 h-16 rounded-2xl bg-gray-200" />
-          <div className="space-y-2 w-48 text-center">
-            <div className="h-3 bg-gray-200 rounded-full" />
-            <div className="h-3 bg-gray-200 rounded-full w-3/4 mx-auto" />
-          </div>
-        </div>
-        <div className="mt-6 flex items-center justify-center gap-3 text-primary font-bold">
-          <Loader2 size={20} className="animate-spin" />
-          <span>Model YOLOv12 sedang menganalisis citra…</span>
-        </div>
-      </section>
-    );
-  }
+	// UPLOADING
+	if (scanStatus === "uploading") {
+		return (
+			<section className="bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
+				<div className="relative rounded-3xl overflow-hidden border-2 border-dashed border-gray-200 bg-gray-50 aspect-4/3 flex flex-col items-center justify-center gap-4 animate-pulse">
+					<div className="w-16 h-16 rounded-2xl bg-gray-200" />
+					<div className="space-y-2 w-48 text-center">
+						<div className="h-3 bg-gray-200 rounded-full" />
+						<div className="h-3 bg-gray-200 rounded-full w-3/4 mx-auto" />
+					</div>
+				</div>
+				<div className="mt-6 flex items-center justify-center gap-3 text-primary font-bold">
+					<Loader2 size={20} className="animate-spin" />
+					<span>Model YOLOv12 sedang menganalisis citra…</span>
+				</div>
+			</section>
+		);
+	}
 
   if (scanStatus === "success") {
     return (
