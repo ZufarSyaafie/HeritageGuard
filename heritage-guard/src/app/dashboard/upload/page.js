@@ -1,7 +1,7 @@
 import UploadHeader from "@/components/upload/UploadHeader";
 import UploadZone from "@/components/upload/UploadZone";
-import ModelStats from "@/components/upload/ModelStats";
 import UploadGuide from "@/components/upload/UploadGuide";
+import ModelStats from "@/components/upload/ModelStats";
 
 export const metadata = {
 	title: "Upload Citra | HeritageGuard",
@@ -20,7 +20,6 @@ export default function UploadPage() {
 				{/* Left Column: Upload area and AI stats (8 columns) */}
 				<div className="lg:col-span-8 flex flex-col gap-8">
 					<UploadZone />
-					<ModelStats />
 				</div>
 
 				{/* Right Column: Guide and Privacy info (4 columns) */}

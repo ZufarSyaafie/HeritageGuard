@@ -11,7 +11,7 @@ export default function Logo({
   return (
     <Link href={href} className={`flex items-center gap-3 group ${className}`}>
       <div 
-        className="relative flex-shrink-0" 
+        className="relative shrink-0" 
         style={{ width: size, height: size }}
       >
         <Image

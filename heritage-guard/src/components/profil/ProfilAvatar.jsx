@@ -1,6 +1,7 @@
 "use client";
 
 const ROLE_LABELS = {
+  admin:      "Administrator System",
   pemerintah: "Instansi Pemerintah",
   swasta:     "Lembaga Swasta / Yayasan",
   ahli:       "Tenaga Ahli Konservasi",

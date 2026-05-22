@@ -1,23 +1,46 @@
 "use client";
 
+import { useEffect, useState } from 'react';
 import { Search, Bell, Settings, FolderOpen } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { supabase } from '@/utils/supabase';
 
 export default function Header() {
   const pathname = usePathname();
-  
-  // Simple breadcrumb logic
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    fetchUser();
+  }, []);
+
   const getBreadcrumb = () => {
     const paths = pathname.split('/').filter(Boolean);
     if (paths.length === 0) return 'Dashboard';
-    
+
     const lastPath = paths[paths.length - 1];
     return lastPath.charAt(0).toUpperCase() + lastPath.slice(1).replace(/-/g, ' ');
   };
 
+  const fullName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User';
+  const rawRole = user?.user_metadata?.role || 'User';
+  
+  // Mapping role agar tampilannya lebih rapi
+  const roleDisplay = {
+    'admin': 'Administrator',
+    'pemerintah': 'Instansi Pemerintah',
+    'swasta': 'Lembaga Swasta',
+    'ahli': 'Tenaga Ahli'
+  };
+  
+  const authRole = roleDisplay[rawRole] || rawRole;
+  const avatarUrl = user?.user_metadata?.avatar_url || `https://ui-avatars.com/api/?name=${encodeURIComponent(fullName)}&background=264bdd&color=fff`;
+
   return (
     <header className="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-8 w-full shrink-0">
-      {/* Breadcrumbs */}
       <div className="flex items-center gap-3 text-sm">
         <FolderOpen size={16} className="text-gray-400" />
         <span className="text-gray-400">/</span>
@@ -25,10 +48,8 @@ export default function Header() {
           {getBreadcrumb()}
         </span>
       </div>
-      
-      {/* Actions & Profile */}
+
       <div className="flex items-center gap-6">
-        {/* Search */}
         <div className="relative group">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-gray-400 group-focus-within:text-primary transition-colors" />
@@ -40,7 +61,6 @@ export default function Header() {
           />
         </div>
 
-        {/* Icons */}
         <div className="flex items-center gap-4 text-gray-400">
           <button className="hover:text-gray-600 transition-colors">
             <Bell size={20} />
@@ -50,15 +70,14 @@ export default function Header() {
           </button>
         </div>
 
-        {/* Profile */}
         <div className="flex items-center gap-3 pl-6 border-l border-gray-100">
           <div className="flex flex-col items-end">
-            <span className="text-sm font-bold text-gray-900 leading-none">Arch. Hendrawan</span>
-            <span className="text-[11px] text-gray-500 mt-1 leading-none">Super Admin</span>
+            <span className="text-sm font-bold text-gray-900 leading-none">{fullName}</span>
+            <span className="text-[11px] text-gray-500 mt-1 leading-none uppercase tracking-wider">{authRole}</span>
           </div>
           <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border border-gray-100">
             <img 
-              src="https://ui-avatars.com/api/?name=Arch+Hendrawan&background=264bdd&color=fff" 
+              src={avatarUrl} 
               alt="Profile" 
               className="w-full h-full object-cover"
             />
