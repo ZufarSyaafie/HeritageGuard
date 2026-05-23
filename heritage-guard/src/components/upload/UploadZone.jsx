@@ -16,7 +16,7 @@ import {
 import useScanStore from "@/store/useScanStore";
 import ScanCanvas from "./ScanCanvas";
 
-const API_URL = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL || "/api/inference";
 
 const DETECTION_THEME = {
   crack: {
@@ -149,10 +149,6 @@ export default function UploadZone() {
 
   const handleSubmit = async () => {
     if (!imageFile || !buildingName.trim() || !location.trim()) return;
-    if (!API_URL) {
-      setScanError("Endpoint analisis belum dikonfigurasi.");
-      return;
-    }
     setMeta({
       buildingName: buildingName.trim(),
       location: location.trim(),
@@ -165,13 +161,23 @@ export default function UploadZone() {
       fd.append("asset_name", buildingName.trim());
       fd.append("asset_location", location.trim());
       const res = await fetch(API_URL, { method: "POST", body: fd });
-      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      if (!res.ok) {
+        let backendMessage = "";
+        try {
+          const payload = await res.json();
+          backendMessage = payload?.error || "";
+        } catch {
+          backendMessage = "";
+        }
+
+        throw new Error(backendMessage || `HTTP ${res.status}: ${res.statusText}`);
+      }
       const data = await res.json();
       const normalized = normalizeDetections(data);
       setScanSuccess(normalized);
     } catch (err) {
       console.error("Scan error:", err);
-      setScanError("Server tidak dapat dijangkau. Coba beberapa saat lagi.");
+      setScanError(err?.message || "Server tidak dapat dijangkau. Coba beberapa saat lagi.");
     }
   };
 

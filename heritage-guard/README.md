@@ -22,15 +22,21 @@ This project uses [`next/font`](https://nextjs.org/docs/app/building-your-applic
 
 ## Environment Variables
 
-Create a `.env` file in this folder for the frontend and fill in your values:
+Create a `.env.local` file in this folder and fill in your values:
 
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=your-supabase-project-url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-NEXT_PUBLIC_HERITAGEGUARD_API_URL=http://localhost:4000/api/inference
+NEXT_SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+NEXT_R2_ENDPOINT=your-r2-endpoint
+NEXT_R2_ACCESS_KEY_ID=your-r2-access-key-id
+NEXT_R2_SECRET_ACCESS_KEY=your-r2-secret-access-key
+NEXT_R2_BUCKET=your-r2-bucket
+NEXT_R2_PUBLIC_BASE_URL=your-optional-public-base-url
+NEXT_HF_INFERENCE_URL=https://your-model-endpoint/predict
 ```
 
-If you already configured the backend with `SUPABASE_URL` and `SUPABASE_ANON_KEY`, copy the same values here but keep the `NEXT_PUBLIC_` prefix for the Next.js app.
+Use `NEXT_PUBLIC_*` only for values needed in the browser. Use `NEXT_*` for server-only values used by Next route handlers.
 
 ## Learn More
 

@@ -31,7 +31,7 @@ function classifySeverity(averageConfidence) {
 }
 
 export function getInferenceUrl() {
-  return process.env.HF_INFERENCE_URL || DEFAULT_INFERENCE_URL
+  return process.env.NEXT_HF_INFERENCE_URL || DEFAULT_INFERENCE_URL
 }
 
 export function sanitizeFileName(fileName) {

@@ -1,11 +1,9 @@
 import crypto from 'node:crypto'
 
-import express from 'express'
-import multer from 'multer'
+import { NextResponse } from 'next/server'
 import { z } from 'zod'
 
-import { getSupabaseAdminClient, getUserFromBearerToken } from '../lib/supabase.js'
-import { createObjectAccessUrl, uploadBuffer } from '../lib/r2.js'
+import { createObjectAccessUrl, uploadBuffer } from '@/lib/server/r2'
 import {
   buildDetectionSummaries,
   buildImageObjectKey,
@@ -14,15 +12,10 @@ import {
   calculateHealthScore,
   getInferenceUrl,
   normalizeDetections,
-} from '../lib/inference.js'
+} from '@/lib/server/inference'
+import { getSupabaseAdminClient, getUserFromBearerToken } from '@/lib/server/supabase'
 
-const router = express.Router()
-const upload = multer({
-  storage: multer.memoryStorage(),
-  limits: {
-    fileSize: 10 * 1024 * 1024,
-  },
-})
+export const runtime = 'nodejs'
 
 const inferenceRequestSchema = z.object({
   asset_id: z.string().uuid().optional(),
@@ -45,20 +38,16 @@ function cleanNullableString(value) {
   return text ? text : null
 }
 
-function getResponseText(response) {
-  return response.text()
-}
-
-async function callInferenceModel(file) {
+async function callInferenceModel(fileBuffer, fileName, mimeType) {
   const form = new FormData()
-  form.append('file', new Blob([file.buffer], { type: file.mimetype }), file.originalname)
+  form.append('file', new Blob([fileBuffer], { type: mimeType }), fileName)
 
   const response = await fetch(getInferenceUrl(), {
     method: 'POST',
     body: form,
   })
 
-  const rawText = await getResponseText(response)
+  const rawText = await response.text()
 
   if (!response.ok) {
     throw new Error(`Inference model returned ${response.status}: ${rawText.slice(0, 300)}`)
@@ -186,53 +175,63 @@ async function getOrCreateModel(supabase, parsedBody) {
   return createdModel.data
 }
 
-router.post('/', upload.single('file'), async (req, res, next) => {
-  const supabase = getSupabaseAdminClient()
-  const parsedBody = inferenceRequestSchema.safeParse(req.body)
-
-  if (!parsedBody.success) {
-    return res.status(400).json({
-      error: 'Invalid request body',
-      details: parsedBody.error.flatten(),
-    })
-  }
-
-  if (!req.file) {
-    return res.status(400).json({
-      error: 'Missing image file. Send multipart/form-data with field name "file".',
-    })
-  }
-
-  if (!req.file.mimetype || !req.file.mimetype.startsWith('image/')) {
-    return res.status(400).json({
-      error: 'Only image uploads are allowed.',
-    })
-  }
-
-  let authUser = null
-
-  if (req.headers.authorization) {
-    try {
-      authUser = await getUserFromBearerToken(req.headers.authorization)
-    } catch (error) {
-      return res.status(401).json({
-        error: 'Invalid bearer token',
-        details: error.message,
-      })
-    }
-  }
-
+export async function POST(req) {
   try {
+    const formData = await req.formData()
+    const fileField = formData.get('file')
+
+    if (!fileField || typeof fileField === 'string') {
+      return NextResponse.json({ error: 'Missing image file. Send multipart/form-data with field name "file".' }, { status: 400 })
+    }
+
+    if (!fileField.type || !fileField.type.startsWith('image/')) {
+      return NextResponse.json({ error: 'Only image uploads are allowed.' }, { status: 400 })
+    }
+
+    if (fileField.size > 10 * 1024 * 1024) {
+      return NextResponse.json({ error: 'File too large. Maximum size is 10MB.' }, { status: 400 })
+    }
+
+    const parsedBody = inferenceRequestSchema.safeParse(Object.fromEntries(formData.entries()))
+
+    if (!parsedBody.success) {
+      return NextResponse.json(
+        {
+          error: 'Invalid request body',
+          details: parsedBody.error.flatten(),
+        },
+        { status: 400 }
+      )
+    }
+
+    let authUser = null
+
+    if (req.headers.get('authorization')) {
+      try {
+        authUser = await getUserFromBearerToken(req.headers.get('authorization'))
+      } catch (error) {
+        return NextResponse.json(
+          {
+            error: 'Invalid bearer token',
+            details: error.message,
+          },
+          { status: 401 }
+        )
+      }
+    }
+
+    const supabase = getSupabaseAdminClient()
     const inspectionId = crypto.randomUUID()
     const asset = await upsertAsset(supabase, parsedBody.data, inspectionId)
     const user = await resolveUserRecord(supabase, parsedBody.data, authUser)
     const model = await getOrCreateModel(supabase, parsedBody.data)
-    const imageKey = buildImageObjectKey(inspectionId, req.file.originalname)
+    const imageKey = buildImageObjectKey(inspectionId, fileField.name)
     const reportKey = buildReportObjectKey(inspectionId)
+    const fileBuffer = Buffer.from(await fileField.arrayBuffer())
 
-    await uploadBuffer(imageKey, req.file.buffer, req.file.mimetype)
+    await uploadBuffer(imageKey, fileBuffer, fileField.type)
 
-    const inferencePayload = await callInferenceModel(req.file)
+    const inferencePayload = await callInferenceModel(fileBuffer, fileField.name, fileField.type)
     const detections = normalizeDetections(inferencePayload.detections)
     const summaries = buildDetectionSummaries(detections)
     const healthScore = calculateHealthScore(detections)
@@ -247,7 +246,11 @@ router.post('/', upload.single('file'), async (req, res, next) => {
       healthScore,
       imageKey,
       reportKey,
-      file: req.file,
+      file: {
+        originalname: fileField.name,
+        mimetype: fileField.type,
+        size: fileField.size,
+      },
       inferencePayload,
     })
 
@@ -309,25 +312,33 @@ router.post('/', upload.single('file'), async (req, res, next) => {
     const imageUrl = await createObjectAccessUrl(imageKey)
     const reportUrl = await createObjectAccessUrl(reportKey)
 
-    return res.status(201).json({
-      message: 'Inference completed successfully',
-      inspection: inspectionInsert.data,
-      asset,
-      user,
-      model,
-      detections,
-      summaries,
-      healthScore,
-      r2: {
-        imageKey,
-        reportKey,
-        imageUrl,
-        reportUrl,
+    return NextResponse.json(
+      {
+        message: 'Inference completed successfully',
+        inspection: inspectionInsert.data,
+        asset,
+        user,
+        model,
+        detections,
+        summaries,
+        healthScore,
+        r2: {
+          imageKey,
+          reportKey,
+          imageUrl,
+          reportUrl,
+        },
       },
-    })
+      { status: 201 }
+    )
   } catch (error) {
-    return next(error)
-  }
-})
+    console.error(error)
 
-export default router
+    return NextResponse.json(
+      {
+        error: error?.message || 'Internal server error',
+      },
+      { status: 500 }
+    )
+  }
+}
