@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useMemo } from "react";
+import { Suspense, useEffect, useState, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import useScanStore from "@/store/useScanStore";
 import ReportHeader from "@/components/laporan/ReportHeader";
@@ -10,6 +10,14 @@ import { Loader2, AlertCircle } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 
 export default function LaporanPage() {
+  return (
+    <Suspense fallback={<ReportLoading />}>
+      <LaporanPageContent />
+    </Suspense>
+  );
+}
+
+function LaporanPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const inspectionId = searchParams.get("id");
@@ -112,12 +120,7 @@ export default function LaporanPage() {
   }, [loading, inspectionId, scanStatus, router]);
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-gray-500 font-medium">Memuat laporan analisis...</p>
-      </div>
-    );
+    return <ReportLoading />;
   }
 
   if (error) {
@@ -144,5 +147,14 @@ export default function LaporanPage() {
         <ReportBody imagePreview={activeData.image} detections={activeData.detections} />
       </div>
     </main>
+  );
+}
+
+function ReportLoading() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <p className="text-gray-500 font-medium">Memuat laporan analisis...</p>
+    </div>
   );
 }

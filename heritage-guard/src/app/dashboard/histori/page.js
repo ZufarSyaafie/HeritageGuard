@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { Suspense, useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import HistoryHeader from "@/components/history/HistoryHeader";
 import HistoryFilters from "@/components/history/HistoryFilters";
@@ -16,6 +16,14 @@ const getStatusInfo = (score) => {
 };
 
 export default function HistoryPage() {
+  return (
+    <Suspense fallback={<HistoryLoading />}>
+      <HistoryPageContent />
+    </Suspense>
+  );
+}
+
+function HistoryPageContent() {
   const searchParams = useSearchParams();
   const initialSearch = searchParams.get("search") || "";
 
@@ -211,12 +219,7 @@ export default function HistoryPage() {
   };
 
   if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 transition-colors">
-        <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-gray-500 dark:text-dark-text-muted font-medium">Memuat data histori...</p>
-      </div>
-    );
+    return <HistoryLoading />;
   }
 
   if (error) {
@@ -253,5 +256,14 @@ export default function HistoryPage() {
         onPageChange={handlePageChange}
       />
     </main>
+  );
+}
+
+function HistoryLoading() {
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 transition-colors">
+      <Loader2 className="w-10 h-10 text-primary animate-spin" />
+      <p className="text-gray-500 dark:text-dark-text-muted font-medium">Memuat data histori...</p>
+    </div>
   );
 }
