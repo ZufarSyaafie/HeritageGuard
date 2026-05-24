@@ -17,13 +17,13 @@ function getInitials(name) {
 
 export default function ProfilAvatar({ name, role }) {
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-blue-200">
+    <div className="flex flex-col items-center gap-4 transition-colors">
+      <div className="w-24 h-24 rounded-full bg-primary flex items-center justify-center text-white text-3xl font-black shadow-lg shadow-blue-500/20">
         {getInitials(name)}
       </div>
       <div className="text-center">
-        <p className="text-xl font-black text-gray-900">{name || "—"}</p>
-        <span className="inline-block mt-2 px-3 py-1 bg-blue-50 text-primary text-xs font-bold rounded-full">
+        <p className="text-xl font-black text-gray-900 dark:text-dark-text transition-colors">{name || "—"}</p>
+        <span className="inline-block mt-2 px-3 py-1 bg-blue-50 dark:bg-primary/10 text-primary text-xs font-bold rounded-full transition-colors">
           {ROLE_LABELS[role] ?? "Pengguna"}
         </span>
       </div>

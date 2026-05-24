@@ -13,6 +13,7 @@ import {
   ChevronRight,
   UserCircle,
   ShieldCheck,
+  Globe,
 } from 'lucide-react';
 import { supabase } from '@/utils/supabase';
 
@@ -38,7 +39,7 @@ export default function Sidebar() {
     { name: 'Histori Inspeksi', path: '/dashboard/histori',  icon: History         },
     // Menu khusus admin
     ...(role === 'admin' ? [
-      { name: 'Monitoring Global', path: '/dashboard/admin',       icon: LayoutDashboard },
+      { name: 'Monitoring Global', path: '/dashboard/admin',       icon: Globe },
       { name: 'Manajemen User',    path: '/dashboard/admin/users', icon: ShieldCheck },
     ] : []),
     { name: 'Profil',           path: '/dashboard/profil',   icon: UserCircle      },
@@ -56,11 +57,11 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`${isOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0 relative`}
+      className={`${isOpen ? 'w-64' : 'w-20'} bg-white dark:bg-dark-surface border-r border-gray-200 dark:border-dark-border flex flex-col h-screen transition-all duration-300 ease-in-out shrink-0 relative`}
     >
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-10 bg-white border border-gray-200 rounded flex items-center justify-center shadow-sm hover:bg-gray-50 hover:border-gray-300 transition-all z-50 text-gray-400 hover:text-gray-600 group"
+        className="absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-10 bg-white dark:bg-dark-surface border border-gray-200 dark:border-dark-border rounded flex items-center justify-center shadow-sm hover:bg-gray-50 dark:hover:bg-dark-bg hover:border-gray-300 dark:hover:border-primary transition-all z-50 text-gray-400 hover:text-gray-600 dark:hover:text-dark-text group"
       >
         {isOpen ? (
           <ChevronLeft size={24} strokeWidth={2} className="group-hover:-translate-x-0.3 transition-transform" />
@@ -88,8 +89,8 @@ export default function Sidebar() {
               href={item.path}
               className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all relative group ${
                 isActive
-                  ? 'bg-blue-50 text-primary font-semibold'
-                  : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                  ? 'bg-blue-50 dark:bg-primary/10 text-primary dark:text-primary font-semibold'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-dark-bg hover:text-gray-900 dark:hover:text-dark-text'
               }`}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 2} />
@@ -102,10 +103,10 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-3 border-t border-gray-100">
+      <div className="p-3 border-t border-gray-100 dark:border-dark-border">
         <button 
           onClick={handleLogout}
-          className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-600 transition-all"
+          className="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-gray-500 dark:text-gray-400 hover:bg-red-50 dark:hover:bg-red-500/10 hover:text-red-600 dark:hover:text-red-500 transition-all"
         >
           <LogOut size={20} />
           {isOpen && <span className="text-sm font-medium">Logout</span>}

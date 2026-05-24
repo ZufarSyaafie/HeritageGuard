@@ -32,12 +32,12 @@ export default function HistoryHeader({ onExport }) {
   };
 
   return (
-    <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+    <header className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 transition-colors">
       <div className="space-y-3">
-        <h1 className="text-4xl font-extrabold text-[#1a1c1c] tracking-tight leading-none">
+        <h1 className="text-4xl font-extrabold text-gray-900 dark:text-dark-text tracking-tight leading-none transition-colors">
           Histori Inspeksi
         </h1>
-        <p className="text-lg text-gray-500 max-w-2xl leading-relaxed font-medium">
+        <p className="text-lg text-gray-500 dark:text-dark-text-muted max-w-2xl leading-relaxed font-medium transition-colors">
           Daftar riwayat pemantauan dan hasil deteksi kerusakan aset cagar budaya menggunakan pemrosesan AI tingkat tinggi.
         </p>
       </div>
@@ -55,7 +55,7 @@ export default function HistoryHeader({ onExport }) {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div 
             ref={modalRef}
-            className="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            className="bg-white dark:bg-dark-surface w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200 border border-transparent dark:border-dark-border"
           >
             {/* Modal Header */}
             <div className="bg-primary p-8 text-white relative">
@@ -76,36 +76,36 @@ export default function HistoryHeader({ onExport }) {
             <div className="p-8 space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Dari Tanggal</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-dark-text-muted px-1">Dari Tanggal</label>
                   <div className="relative group">
-                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-dark-text-muted group-focus-within:text-primary transition-colors" size={18} />
                     <input 
                       type="date" 
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-gray-100 focus:ring-4 focus:ring-blue-100/50 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-gray-700 outline-none transition-all"
+                      className="w-full bg-gray-50 dark:bg-dark-bg border border-transparent dark:border-dark-border focus:bg-white dark:focus:bg-dark-surface focus:border-gray-200 dark:focus:border-primary focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-primary/10 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-gray-700 dark:text-dark-text outline-none transition-all"
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 px-1">Hingga Tanggal</label>
+                  <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-dark-text-muted px-1">Hingga Tanggal</label>
                   <div className="relative group">
-                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={18} />
+                    <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-dark-text-muted group-focus-within:text-primary transition-colors" size={18} />
                     <input 
                       type="date" 
                       value={endDate}
                       onChange={(e) => setEndDate(e.target.value)}
-                      className="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-gray-100 focus:ring-4 focus:ring-blue-100/50 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-gray-700 outline-none transition-all"
+                      className="w-full bg-gray-50 dark:bg-dark-bg border border-transparent dark:border-dark-border focus:bg-white dark:focus:bg-dark-surface focus:border-gray-200 dark:focus:border-primary focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-primary/10 rounded-2xl py-4 pl-12 pr-4 text-sm font-bold text-gray-700 dark:text-dark-text outline-none transition-all"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-blue-50/50 p-4 rounded-2xl border border-blue-100/50 flex gap-3">
-                <div className="w-8 h-8 bg-blue-100 text-primary rounded-lg flex items-center justify-center shrink-0">
+              <div className="bg-blue-50/50 dark:bg-primary/5 p-4 rounded-2xl border border-blue-100/50 dark:border-primary/20 flex gap-3">
+                <div className="w-8 h-8 bg-blue-100 dark:bg-primary/20 text-primary rounded-lg flex items-center justify-center shrink-0">
                   <Calendar size={16} />
                 </div>
-                <p className="text-[11px] text-primary/80 font-semibold leading-relaxed">
+                <p className="text-[11px] text-primary/80 dark:text-primary font-semibold leading-relaxed">
                   Tip: Kosongkan kedua tanggal untuk mengekspor seluruh data yang tampil di tabel saat ini.
                 </p>
               </div>
@@ -113,14 +113,14 @@ export default function HistoryHeader({ onExport }) {
               <div className="flex flex-col gap-3 pt-2">
                 <button 
                   onClick={handleConfirmExport}
-                  className="w-full bg-primary text-white py-4 rounded-2xl font-extrabold flex items-center justify-center gap-3 shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all active:scale-[0.98]"
+                  className="w-full bg-primary text-white py-4 rounded-2xl font-extrabold flex items-center justify-center gap-3 shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-700 transition-all active:scale-[0.98]"
                 >
                   <Download size={20} />
                   <span>Unduh Sekarang</span>
                 </button>
                 <button 
                   onClick={() => setIsModalOpen(false)}
-                  className="w-full py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors"
+                  className="w-full py-4 text-sm font-bold text-gray-400 dark:text-dark-text-muted hover:text-gray-600 dark:hover:text-dark-text transition-colors"
                 >
                   Batalkan
                 </button>

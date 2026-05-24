@@ -2,7 +2,7 @@ import { Cpu, Zap } from "lucide-react";
 
 export default function ModelStats() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6 transition-colors">
       <StatCard
         icon={<Cpu className="text-primary" size={28} />}
         label="AI Model"
@@ -19,15 +19,15 @@ export default function ModelStats() {
 
 function StatCard({ icon, label, value }) {
   return (
-    <div className="bg-white p-7 rounded-3xl border border-gray-100 flex items-center gap-6 shadow-sm hover:shadow-md transition-shadow">
-      <div className="w-16 h-16 bg-blue-50/50 rounded-2xl flex items-center justify-center border border-blue-50/50">
+    <div className="bg-white dark:bg-dark-surface p-7 rounded-3xl border border-gray-100 dark:border-dark-border flex items-center gap-6 shadow-sm hover:shadow-md transition-all">
+      <div className="w-16 h-16 bg-blue-50/50 dark:bg-primary/10 rounded-2xl flex items-center justify-center border border-blue-50/50 dark:border-primary/20">
         {icon}
       </div>
       <div>
-        <span className="block text-[11px] font-extrabold text-gray-400 uppercase tracking-[0.2em] mb-1.5">
+        <span className="block text-[11px] font-extrabold text-gray-400 dark:text-dark-text-muted uppercase tracking-[0.2em] mb-1.5 transition-colors">
           {label}
         </span>
-        <span className="block text-base font-bold text-gray-900 leading-tight">
+        <span className="block text-base font-bold text-gray-900 dark:text-dark-text leading-tight transition-colors">
           {value}
         </span>
       </div>

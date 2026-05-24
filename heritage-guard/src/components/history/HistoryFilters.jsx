@@ -9,16 +9,16 @@ export default function HistoryFilters({ onFilterChange, onSearchChange }) {
   const sortOptions = ['Terbaru', 'Terlama', 'Lokasi A-Z', 'Lokasi Z-A'];
 
   return (
-    <section className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm mb-8">
+    <section className="bg-white dark:bg-dark-surface p-6 rounded-3xl border border-gray-100 dark:border-dark-border shadow-sm mb-8 transition-colors">
       <div className="flex flex-col lg:flex-row gap-4">
         {/* Search Input */}
         <div className="relative flex-1 group">
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors" size={20} />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-400 dark:text-dark-text-muted group-focus-within:text-primary transition-colors" size={20} />
           <input 
             type="text" 
             placeholder="Cari ID Inspeksi atau Lokasi..." 
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full bg-gray-50 border border-transparent focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-blue-100/50 rounded-2xl py-4 pl-14 pr-6 text-sm outline-none transition-all font-medium"
+            className="w-full bg-gray-50 dark:bg-dark-bg border border-transparent dark:border-dark-border focus:bg-white dark:focus:bg-dark-surface focus:border-gray-200 dark:focus:border-primary focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-primary/10 rounded-2xl py-4 pl-14 pr-6 text-sm outline-none transition-all font-medium dark:text-dark-text dark:placeholder:text-gray-400"
           />
         </div>
 
@@ -82,15 +82,15 @@ function SelectFilter({ label, icon, options = [], isIconOnly = false, align = '
           isIconOnly ? 'w-14 px-0' : 'px-6 gap-4 min-w-[180px] justify-between'
         } ${
           isOpen 
-          ? 'bg-white border-primary text-primary ring-4 ring-blue-50' 
-          : 'bg-gray-50 border-gray-100 text-gray-500 hover:bg-white hover:border-gray-200 hover:text-primary'
+          ? 'bg-white dark:bg-dark-surface border-primary text-primary ring-4 ring-blue-50 dark:ring-primary/10' 
+          : 'bg-gray-50 dark:bg-dark-bg border-gray-100 dark:border-dark-border text-gray-500 dark:text-dark-text-muted hover:bg-white dark:hover:bg-dark-surface hover:border-gray-200 dark:hover:border-dark-border hover:text-primary'
         }`}
       >
         {isIconOnly ? (
           icon
         ) : (
           <>
-            <span className={`text-sm font-bold ${isOpen ? 'text-primary' : 'text-gray-700'}`}>{selected}</span>
+            <span className={`text-sm font-bold ${isOpen ? 'text-primary' : 'text-gray-700 dark:text-dark-text'}`}>{selected}</span>
             <ChevronDown 
               size={18} 
               className={`transition-transform duration-300 ${isOpen ? 'rotate-180 text-primary' : 'text-gray-400 group-hover:text-primary'}`} 
@@ -101,15 +101,15 @@ function SelectFilter({ label, icon, options = [], isIconOnly = false, align = '
 
       {/* Dropdown Menu */}
       <div 
-        className={`absolute top-[calc(100%+8px)] ${align === 'right' ? 'right-0' : 'left-0'} min-w-[220px] bg-white border border-gray-100 rounded-2xl shadow-xl py-2 z-50 transition-all duration-200 origin-top ${
+        className={`absolute top-[calc(100%+8px)] ${align === 'right' ? 'right-0' : 'left-0'} min-w-[220px] bg-white dark:bg-dark-card border border-gray-100 dark:border-dark-border rounded-2xl shadow-xl py-2 z-50 transition-all duration-200 origin-top ${
           isOpen 
           ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto' 
           : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
         }`}
       >
         {isIconOnly && (
-          <div className="px-5 py-2 mb-1 border-b border-gray-50">
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Urutkan Berdasarkan</span>
+          <div className="px-5 py-2 mb-1 border-b border-gray-50 dark:border-dark-border">
+            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-dark-text-muted">Urutkan Berdasarkan</span>
           </div>
         )}
         {options.map((option) => (
@@ -118,8 +118,8 @@ function SelectFilter({ label, icon, options = [], isIconOnly = false, align = '
             onClick={() => handleSelect(option)}
             className={`w-full flex items-center justify-between px-5 py-3 text-sm font-medium transition-colors ${
               selected === option && !isIconOnly
-              ? 'bg-blue-50 text-primary' 
-              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+              ? 'bg-blue-50 dark:bg-primary/10 text-primary' 
+              : 'text-gray-600 dark:text-dark-text-muted hover:bg-gray-50 dark:hover:bg-dark-bg hover:text-gray-900 dark:hover:text-dark-text'
             }`}
           >
             {option}

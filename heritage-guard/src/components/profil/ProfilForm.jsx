@@ -11,12 +11,12 @@ const ROLES = [
 ];
 
 const inputCls =
-  "w-full bg-gray-50 border border-transparent focus:bg-white focus:border-gray-200 focus:ring-4 focus:ring-blue-100/50 rounded-xl py-3.5 px-4 text-sm outline-none transition-all font-semibold disabled:opacity-60";
+  "w-full bg-gray-50 dark:bg-dark-bg border border-transparent dark:border-dark-border focus:bg-white dark:focus:bg-dark-surface focus:border-gray-200 dark:focus:border-primary focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-primary/10 rounded-xl py-3.5 px-4 text-sm outline-none transition-all font-semibold disabled:opacity-60 dark:text-dark-text";
 
 function FormField({ label, children }) {
   return (
     <div className="space-y-2">
-      <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">{label}</label>
+      <label className="text-[10px] font-black text-gray-400 dark:text-dark-text-muted uppercase tracking-widest ml-1">{label}</label>
       {children}
     </div>
   );
@@ -34,6 +34,8 @@ export default function ProfilForm({ initialUser }) {
   const [saved, setSaved]   = useState(false);
   const [error, setError] = useState("");
   const [pwError, setPwError] = useState("");
+
+  const isOAuth = initialUser?.app_metadata?.provider !== 'email' && initialUser?.app_metadata?.provider !== undefined;
 
   const handleSave = async () => {
     setLoading(true);
@@ -82,10 +84,10 @@ export default function ProfilForm({ initialUser }) {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 transition-colors">
       {/* Profile Info */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
-        <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">Informasi Akun</h3>
+      <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border shadow-sm p-6 space-y-5">
+        <h3 className="text-sm font-black text-gray-400 dark:text-dark-text-muted uppercase tracking-widest">Informasi Akun</h3>
 
         {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
 
@@ -128,13 +130,13 @@ export default function ProfilForm({ initialUser }) {
           <button
             onClick={handleSave}
             disabled={loading}
-            className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2"
+            className="px-6 py-3 bg-primary text-white rounded-xl font-bold hover:bg-blue-700 transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2 shadow-lg shadow-blue-200 dark:shadow-none"
           >
             {loading && <Loader2 size={16} className="animate-spin" />}
             Simpan Perubahan
           </button>
           {saved && (
-            <div className="flex items-center gap-1.5 text-green-600 text-sm font-bold">
+            <div className="flex items-center gap-1.5 text-green-600 dark:text-green-400 text-sm font-bold">
               <CheckCircle2 size={16} />
               Tersimpan!
             </div>
@@ -142,38 +144,46 @@ export default function ProfilForm({ initialUser }) {
         </div>
       </div>
 
-      {/* Change Password */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 space-y-5">
-        <h3 className="text-sm font-black text-gray-400 uppercase tracking-widest">Ubah Kata Sandi</h3>
+      {/* Change Password - Only for Email Login */}
+      {!isOAuth ? (
+        <div className="bg-white dark:bg-dark-surface rounded-xl border border-gray-100 dark:border-dark-border shadow-sm p-6 space-y-5">
+          <h3 className="text-sm font-black text-gray-400 dark:text-dark-text-muted uppercase tracking-widest">Ubah Kata Sandi</h3>
 
-        <FormField label="Kata Sandi Baru">
-          <input
-            className={inputCls}
-            type="password"
-            value={passwords.next}
-            onChange={(e) => setPasswords({ ...passwords, next: e.target.value })}
-          />
-        </FormField>
-        <FormField label="Konfirmasi Kata Sandi Baru">
-          <input
-            className={inputCls}
-            type="password"
-            value={passwords.confirm}
-            onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
-          />
-        </FormField>
+          <FormField label="Kata Sandi Baru">
+            <input
+              className={inputCls}
+              type="password"
+              value={passwords.next}
+              onChange={(e) => setPasswords({ ...passwords, next: e.target.value })}
+            />
+          </FormField>
+          <FormField label="Konfirmasi Kata Sandi Baru">
+            <input
+              className={inputCls}
+              type="password"
+              value={passwords.confirm}
+              onChange={(e) => setPasswords({ ...passwords, confirm: e.target.value })}
+            />
+          </FormField>
 
-        {pwError && <p className="text-sm text-red-500 font-medium">{pwError}</p>}
+          {pwError && <p className="text-sm text-red-500 font-medium">{pwError}</p>}
 
-        <button
-          onClick={handlePasswordSave}
-          disabled={loading}
-          className="px-6 py-3 bg-gray-900 text-white rounded-xl font-bold hover:bg-gray-700 transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2"
-        >
-          {loading && <Loader2 size={16} className="animate-spin" />}
-          Perbarui Kata Sandi
-        </button>
-      </div>
+          <button
+            onClick={handlePasswordSave}
+            disabled={loading}
+            className="px-6 py-3 bg-gray-900 dark:bg-dark-bg text-white rounded-xl font-bold hover:bg-gray-700 dark:hover:bg-dark-card transition-all active:scale-95 disabled:opacity-70 flex items-center gap-2"
+          >
+            {loading && <Loader2 size={16} className="animate-spin" />}
+            Perbarui Kata Sandi
+          </button>
+        </div>
+      ) : (
+        <div className="bg-blue-50/50 dark:bg-primary/5 rounded-xl border border-blue-100/50 dark:border-primary/20 p-6">
+          <p className="text-sm text-primary/80 dark:text-primary font-medium leading-relaxed">
+            Anda masuk menggunakan <strong>Google OAuth</strong>. Pengaturan kata sandi dikelola langsung melalui akun Google Anda dan tidak dapat diubah di sini demi keamanan.
+          </p>
+        </div>
+      )}
     </div>
   );
 }

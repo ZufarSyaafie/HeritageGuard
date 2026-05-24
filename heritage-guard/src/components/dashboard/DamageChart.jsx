@@ -5,24 +5,24 @@ import {
   Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
 
-const MOCK_DATA = [
-  { month: "Jan", crack: 8,  spalling: 4,  moisture: 6  },
-  { month: "Feb", crack: 12, spalling: 7,  moisture: 9  },
-  { month: "Mar", crack: 7,  spalling: 5,  moisture: 11 },
-  { month: "Apr", crack: 15, spalling: 9,  moisture: 8  },
-  { month: "Mei", crack: 10, spalling: 6,  moisture: 14 },
-  { month: "Jun", crack: 18, spalling: 11, moisture: 10 },
-];
+export default function DamageChart({ data = [] }) {
+  const chartData = data.length > 0 ? data : [
+    { month: "Jan", crack: 0, spalling: 0, moisture: 0 },
+    { month: "Feb", crack: 0, spalling: 0, moisture: 0 },
+    { month: "Mar", crack: 0, spalling: 0, moisture: 0 },
+    { month: "Apr", crack: 0, spalling: 0, moisture: 0 },
+    { month: "Mei", crack: 0, spalling: 0, moisture: 0 },
+    { month: "Jun", crack: 0, spalling: 0, moisture: 0 },
+  ];
 
-export default function DamageChart() {
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <div className="bg-white dark:bg-dark-surface rounded-xl shadow-sm border border-gray-100 dark:border-dark-border p-6 transition-colors">
       <div className="mb-6">
-        <h3 className="text-lg font-bold text-gray-900">Tren Deteksi Kerusakan</h3>
-        <p className="text-xs text-gray-400 mt-1 font-medium">6 bulan terakhir — jumlah deteksi per kategori</p>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-dark-text">Tren Deteksi Kerusakan</h3>
+        <p className="text-xs text-gray-400 dark:text-dark-text-muted mt-1 font-medium">Histori deteksi per kategori (6 bulan terakhir)</p>
       </div>
       <ResponsiveContainer width="100%" height={240}>
-        <AreaChart data={MOCK_DATA} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
+        <AreaChart data={chartData} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="gCrack" x1="0" y1="0" x2="0" y2="1">
               <stop offset="5%"  stopColor="#ef4444" stopOpacity={0.15} />
@@ -37,7 +37,7 @@ export default function DamageChart() {
               <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}    />
             </linearGradient>
           </defs>
-          <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
+          <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" className="dark:opacity-5" />
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: "#9ca3af" }} axisLine={false} tickLine={false} />
           <Tooltip
@@ -45,6 +45,7 @@ export default function DamageChart() {
               borderRadius: "12px",
               border: "1px solid #f3f4f6",
               fontSize: "12px",
+              backgroundColor: "var(--bg-card, #fff)",
               boxShadow: "0 4px 20px rgba(0,0,0,0.08)",
             }}
           />

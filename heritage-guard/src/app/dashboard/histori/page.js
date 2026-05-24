@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import HistoryHeader from "@/components/history/HistoryHeader";
 import HistoryFilters from "@/components/history/HistoryFilters";
 import HistoryTable from "@/components/history/HistoryTable";
@@ -9,17 +10,20 @@ import { supabase } from "@/utils/supabase";
 import { Loader2 } from "lucide-react";
 
 const getStatusInfo = (score) => {
-  if (score >= 80) return { label: "AMAN", color: "text-green-600 bg-green-50 border-green-100" };
-  if (score >= 50) return { label: "MENENGAH", color: "text-orange-600 bg-orange-50 border-orange-100" };
-  return { label: "KRITIS", color: "text-red-600 bg-red-50 border-red-100" };
+  if (score >= 80) return { label: "AMAN", color: "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-500/10 border-green-100 dark:border-green-500/20" };
+  if (score >= 50) return { label: "MENENGAH", color: "text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-500/10 border-orange-100 dark:border-orange-500/20" };
+  return { label: "KRITIS", color: "text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 border-red-100 dark:border-red-500/20" };
 };
 
 export default function HistoryPage() {
+  const searchParams = useSearchParams();
+  const initialSearch = searchParams.get("search") || "";
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [filters, setFilters] = useState({
     time: "Semua Waktu",
     status: "Semua Status",
@@ -208,23 +212,23 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 transition-colors">
         <Loader2 className="w-10 h-10 text-primary animate-spin" />
-        <p className="text-gray-500 font-medium">Memuat data histori...</p>
+        <p className="text-gray-500 dark:text-dark-text-muted font-medium">Memuat data histori...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center">
-        <div className="p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100 max-w-md">
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center transition-colors">
+        <div className="p-4 bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 rounded-2xl border border-red-100 dark:border-red-500/20 max-w-md">
           <p className="font-bold mb-1">Terjadi Kesalahan</p>
           <p className="text-sm">{error}</p>
         </div>
         <button 
           onClick={() => window.location.reload()}
-          className="px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm"
+          className="px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-200 dark:shadow-none"
         >
           Coba Lagi
         </button>

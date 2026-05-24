@@ -5,8 +5,7 @@ export default function Logo({
   className = "", 
   size = 40, 
   href = "/", 
-  showText = true,
-  theme = "dark" 
+  showText = true
 }) {
   return (
     <Link href={href} className={`flex items-center gap-3 group ${className}`}>
@@ -24,15 +23,11 @@ export default function Logo({
       </div>
       
       {showText && (
-        <div className="flex flex-col">
-          <span className={`font-bold text-lg leading-none tracking-tight ${
-            theme === "dark" ? "text-gray-900" : "text-white"
-          }`}>
+        <div className="flex flex-col transition-colors">
+          <span className="font-bold text-lg leading-none tracking-tight text-gray-900 dark:text-dark-text">
             HeritageGuard
           </span>
-          <span className={`text-[10px] font-bold mt-1 uppercase tracking-widest leading-none ${
-            theme === "dark" ? "text-gray-500" : "text-gray-400"
-          }`}>
+          <span className="text-[10px] font-bold mt-1 uppercase tracking-widest leading-none text-gray-500 dark:text-dark-text-muted">
             AI Structural Monitoring
           </span>
         </div>

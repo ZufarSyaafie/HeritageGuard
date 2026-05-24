@@ -24,3 +24,26 @@ export async function getHistoryData(userId) {
     return { data: [], error: error.message };
   }
 }
+
+export async function getHistoryDetail(inspectionId) {
+  try {
+    const supabaseAdmin = getSupabaseAdminClient();
+    const { data, error } = await supabaseAdmin
+      .from('INSPECTIONS')
+      .select(`
+        *,
+        ASSETS (*),
+        DETECTIONS (*),
+        ANALYSIS_SUMMARIES (*),
+        USERS (full_name, email)
+      `)
+      .eq('id', inspectionId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return { data, error: null };
+  } catch (error) {
+    console.error("Error fetching history detail:", error);
+    return { data: null, error: error.message };
+  }
+}

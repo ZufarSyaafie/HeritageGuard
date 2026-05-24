@@ -9,7 +9,7 @@
   --font-cormorant: 'Cormorant Garamond', serif;
   --font-mono: 'IBM Plex Mono', monospace;
 
-  /* Palet Warna Hasil Generate Stitch */
+  /* Palet Warna Terang (Tema Awal Anda) */
   --color-on-surface: #1a1c1c;
   --color-surface-container-highest: #e2e2e2;
   --color-primary-container: #4666f7;
@@ -19,12 +19,38 @@
   --color-surface-container-lowest: #ffffff;
   --color-surface-container-low: #f3f3f3;
   --color-tertiary-container: #bf5500;
+
+  /* Palet Warna Gelap (Terpisah) */
+  --color-dark-bg: #020617;
+  --color-dark-surface: #0f172a;
+  --color-dark-card: #1e293b;
+  --color-dark-border: #334155;
+  --color-dark-text: #f8fafc;
+  --color-dark-text-muted: #94a3b8;
 }
 
-body {
-  background-color: var(--color-surface);
-  color: var(--color-on-surface);
-  font-family: var(--font-inter);
+/* AKTIFKAN CLASSS-BASED DARK MODE */
+@variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --bg-main: var(--color-surface);
+    --text-main: var(--color-on-surface);
+    color-scheme: light;
+  }
+
+  .dark {
+    --bg-main: var(--color-dark-bg);
+    --text-main: var(--color-dark-text);
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    font-family: var(--font-inter);
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

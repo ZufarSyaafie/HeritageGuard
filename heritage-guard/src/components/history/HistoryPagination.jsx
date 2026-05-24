@@ -14,9 +14,9 @@ export default function HistoryPagination({
   }
 
   return (
-    <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 px-4">
-      <p className="text-sm text-gray-500 font-medium">
-        Menampilkan <span className="text-gray-900 font-bold">{totalEntries > 0 ? startIndex + 1 : 0}</span> - <span className="text-gray-900 font-bold">{Math.min(endIndex, totalEntries)}</span> dari <span className="text-gray-900 font-bold">{totalEntries}</span> entri
+    <div className="mt-8 flex flex-col sm:flex-row items-center justify-between gap-6 px-4 transition-colors">
+      <p className="text-sm text-gray-500 dark:text-dark-text-muted font-medium">
+        Menampilkan <span className="text-gray-900 dark:text-dark-text font-bold">{totalEntries > 0 ? startIndex + 1 : 0}</span> - <span className="text-gray-900 dark:text-dark-text font-bold">{Math.min(endIndex, totalEntries)}</span> dari <span className="text-gray-900 dark:text-dark-text font-bold">{totalEntries}</span> entri
       </p>
 
       <nav className="flex items-center gap-2">
@@ -57,7 +57,7 @@ function PageNumber({ number, active, onClick }) {
       className={`w-10 h-10 rounded-xl font-bold text-sm transition-all ${
         active 
         ? 'bg-primary text-white shadow-lg shadow-blue-500/20 active:scale-95' 
-        : 'text-gray-500 hover:bg-gray-100 hover:text-gray-900'
+        : 'text-gray-500 dark:text-dark-text-muted hover:bg-gray-100 dark:hover:bg-dark-surface hover:text-gray-900 dark:hover:text-dark-text'
       }`}
     >
       {number}
@@ -74,8 +74,8 @@ function PageNavButton({ icon, label, isRight, disabled, onClick }) {
         isRight ? 'flex-row-reverse' : ''
       } ${
         disabled 
-        ? 'text-gray-200 cursor-not-allowed' 
-        : 'text-gray-400 hover:text-gray-900'
+        ? 'text-gray-200 dark:text-dark-border cursor-not-allowed' 
+        : 'text-gray-400 dark:text-dark-text-muted hover:text-gray-900 dark:hover:text-dark-text'
       }`}
     >
       <span className={`${!disabled && 'group-hover:scale-110'} transition-transform`}>{icon}</span>
