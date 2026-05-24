@@ -6,17 +6,21 @@ import { useRouter } from 'next/navigation';
 export default function HistoryTable({ data = [] }) {
   const router = useRouter();
 
-  const handleViewDetail = (id) => {
-    // Navigasi ke halaman detail (simulasi)
-    console.log(`Navigating to detail: ${id}`);
-    alert(`Membuka detail untuk Inspeksi: ${id}`);
-    // router.push(`/dashboard/histori/${id}`);
+  const handleViewDetail = (row) => {
+    if (row.reportUrl) {
+      window.open(row.reportUrl, '_blank');
+    } else {
+      alert(`Membuka detail untuk Inspeksi: ${row.id}`);
+    }
   };
 
-  const handleDownloadPDF = (id) => {
-    // Simulasi download PDF
-    console.log(`Downloading PDF for: ${id}`);
-    alert(`Menyiapkan unduhan PDF untuk ID: ${id}...\nLaporan sedang diproses.`);
+  const handleDownloadPDF = (row) => {
+    if (row.reportUrl) {
+      // For now just open the JSON report, or we could trigger a print/PDF generation
+      window.open(row.reportUrl, '_blank');
+    } else {
+      alert(`Menyiapkan unduhan PDF untuk ID: ${row.id}...\nLaporan sedang diproses.`);
+    }
   };
 
   if (data.length === 0) {
@@ -43,13 +47,21 @@ export default function HistoryTable({ data = [] }) {
           </thead>
           <tbody className="divide-y divide-gray-50">
             {data.map((row) => (
-              <tr key={row.id} className="hover:bg-gray-50/50 transition-colors group">
+              <tr key={row.realId || row.id} className="hover:bg-gray-50/50 transition-colors group">
                 <td className="px-8 py-5">
                   <span className="text-sm font-extrabold text-primary tracking-tight">{row.id}</span>
                 </td>
                 <td className="px-6 py-5">
-                  <div className="w-14 h-10 rounded-lg overflow-hidden border border-gray-100 shadow-sm group-hover:scale-105 transition-transform duration-300">
-                    <img src={row.image} alt={row.location} className="w-full h-full object-cover" />
+                  <div className="w-14 h-10 rounded-lg overflow-hidden border border-gray-100 shadow-sm group-hover:scale-105 transition-transform duration-300 bg-gray-50 flex items-center justify-center">
+                    <img 
+                      src={row.image} 
+                      alt={row.location} 
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        console.error(`Gagal memuat gambar untuk ID: ${row.id}`, row.image);
+                        e.target.src = "/next.svg";
+                      }}
+                    />
                   </div>
                 </td>
                 <td className="px-6 py-5">
@@ -73,12 +85,12 @@ export default function HistoryTable({ data = [] }) {
                     <ActionButton 
                       icon={<Eye size={18} />} 
                       title="Lihat Detail" 
-                      onClick={() => handleViewDetail(row.id)}
+                      onClick={() => handleViewDetail(row)}
                     />
                     <ActionButton 
                       icon={<FileText size={18} />} 
                       title="Unduh PDF" 
-                      onClick={() => handleDownloadPDF(row.id)}
+                      onClick={() => handleDownloadPDF(row)}
                     />
                   </div>
                 </td>

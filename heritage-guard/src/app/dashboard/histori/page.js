@@ -1,178 +1,93 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import HistoryHeader from "@/components/history/HistoryHeader";
 import HistoryFilters from "@/components/history/HistoryFilters";
 import HistoryTable from "@/components/history/HistoryTable";
 import HistoryPagination from "@/components/history/HistoryPagination";
+import { supabase } from "@/utils/supabase";
+import { Loader2 } from "lucide-react";
 
-const MOCK_HISTORY_DATA = [
-  {
-    id: "HG-2024-001",
-    image: "https://images.unsplash.com/photo-1590050752117-23a9d7f26a83?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Borobudur",
-    subLocation: "Sektor B - Relief Dasar",
-    date: "12 Okt 2024",
-    timestamp: new Date("2024-10-12").getTime(),
-    status: "KRITIS",
-    statusColor: "text-red-600 bg-red-50 border-red-100"
-  },
-  {
-    id: "HG-2024-002",
-    image: "https://images.unsplash.com/photo-1624388481491-c423c713b5d2?q=80&w=100&auto=format&fit=crop",
-    location: "Museum Fatahillah",
-    subLocation: "Pilar Utama - Sayap Barat",
-    date: "10 Okt 2024",
-    timestamp: new Date("2024-10-10").getTime(),
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
-  },
-  {
-    id: "HG-2024-003",
-    image: "https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Prambanan",
-    subLocation: "Pagar Luar - Area Parkir",
-    date: "08 Okt 2024",
-    timestamp: new Date("2024-10-08").getTime(),
-    status: "AMAN",
-    statusColor: "text-green-600 bg-green-50 border-green-100"
-  },
-  {
-    id: "HG-2024-004",
-    image: "https://images.unsplash.com/photo-1579446210852-6693a778e351?q=80&w=100&auto=format&fit=crop",
-    location: "Benteng Vredeburg",
-    subLocation: "Dinding Selatan - Parit Utama",
-    date: "05 Okt 2024",
-    timestamp: new Date("2024-10-05").getTime(),
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
-  },
-  {
-    id: "HG-2024-005",
-    image: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Borobudur",
-    subLocation: "Sektor C - Stupa Atas",
-    date: "01 Okt 2024",
-    timestamp: new Date("2024-10-01").getTime(),
-    status: "AMAN",
-    statusColor: "text-green-600 bg-green-50 border-green-100"
-  },
-  {
-    id: "HG-2024-006",
-    image: "https://images.unsplash.com/photo-1624235115264-70967396a84d?q=80&w=100&auto=format&fit=crop",
-    location: "Istana Merdeka",
-    subLocation: "Halaman Utama",
-    date: "28 Sep 2024",
-    timestamp: new Date("2024-09-28").getTime(),
-    status: "KRITIS",
-    statusColor: "text-red-600 bg-red-50 border-red-100"
-  },
-  {
-    id: "HG-2024-007",
-    image: "https://images.unsplash.com/photo-1565153205315-9988ccf76326?q=80&w=100&auto=format&fit=crop",
-    location: "Lawang Sewu",
-    subLocation: "Gedung B - Lantai 2",
-    date: "25 Sep 2024",
-    timestamp: new Date("2024-09-25").getTime(),
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
-  },
-  {
-    id: "HG-2024-008",
-    image: "https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Prambanan",
-    subLocation: "Candi Siwa - Area Utara",
-    date: "20 Sep 2024",
-    timestamp: new Date("2024-09-20").getTime(),
-    status: "AMAN",
-    statusColor: "text-green-600 bg-green-50 border-green-100"
-  },
-  {
-    id: "HG-2024-009",
-    image: "https://images.unsplash.com/photo-1590050752117-23a9d7f26a83?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Borobudur",
-    subLocation: "Sektor A - Gerbang Masuk",
-    date: "15 Sep 2024",
-    timestamp: new Date("2024-09-15").getTime(),
-    status: "KRITIS",
-    statusColor: "text-red-600 bg-red-50 border-red-100"
-  },
-  {
-    id: "HG-2024-010",
-    image: "https://images.unsplash.com/photo-1624388481491-c423c713b5d2?q=80&w=100&auto=format&fit=crop",
-    location: "Museum Fatahillah",
-    subLocation: "Ruang Sidang - Area Atas",
-    date: "12 Sep 2024",
-    timestamp: new Date("2024-09-12").getTime(),
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
-  },
-  {
-    id: "HG-2024-011",
-    image: "https://images.unsplash.com/photo-1579446210852-6693a778e351?q=80&w=100&auto=format&fit=crop",
-    location: "Benteng Vredeburg",
-    subLocation: "Dinding Utara",
-    date: "10 Sep 2024",
-    timestamp: new Date("2024-09-10").getTime(),
-    status: "AMAN",
-    statusColor: "text-green-600 bg-green-50 border-green-100"
-  },
-  {
-    id: "HG-2024-012",
-    image: "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?q=80&w=100&auto=format&fit=crop",
-    location: "Lawang Sewu",
-    subLocation: "Gedung A - Basement",
-    date: "05 Sep 2024",
-    timestamp: new Date("2024-09-05").getTime(),
-    status: "KRITIS",
-    statusColor: "text-red-600 bg-red-50 border-red-100"
-  },
-  {
-    id: "HG-2024-013",
-    image: "https://images.unsplash.com/photo-1624235115264-70967396a84d?q=80&w=100&auto=format&fit=crop",
-    location: "Museum Nasional",
-    subLocation: "Ruang Emas",
-    date: "01 Sep 2024",
-    timestamp: new Date("2024-09-01").getTime(),
-    status: "MENENGAH",
-    statusColor: "text-orange-600 bg-orange-50 border-orange-100"
-  },
-  {
-    id: "HG-2024-014",
-    image: "https://images.unsplash.com/photo-1565153205315-9988ccf76326?q=80&w=100&auto=format&fit=crop",
-    location: "Gedung Sate",
-    subLocation: "Menara Utama",
-    date: "28 Agu 2024",
-    timestamp: new Date("2024-08-28").getTime(),
-    status: "AMAN",
-    statusColor: "text-green-600 bg-green-50 border-green-100"
-  },
-  {
-    id: "HG-2024-015",
-    image: "https://images.unsplash.com/photo-1548013146-72479768bbaa?q=80&w=100&auto=format&fit=crop",
-    location: "Candi Sewu",
-    subLocation: "Candi Perwara",
-    date: "25 Agu 2024",
-    timestamp: new Date("2024-08-25").getTime(),
-    status: "KRITIS",
-    statusColor: "text-red-600 bg-red-50 border-red-100"
-  }
-];
+const getStatusInfo = (score) => {
+  if (score >= 80) return { label: "AMAN", color: "text-green-600 bg-green-50 border-green-100" };
+  if (score >= 50) return { label: "MENENGAH", color: "text-orange-600 bg-orange-50 border-orange-100" };
+  return { label: "KRITIS", color: "text-red-600 bg-red-50 border-red-100" };
+};
 
 export default function HistoryPage() {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const [filters, setFilters] = useState({
-    time: "Bulan Ini",
+    time: "Semua Waktu",
     status: "Semua Status",
     sort: "Terbaru"
   });
 
   const itemsPerPage = 10;
+
+  useEffect(() => {
+    async function fetchHistory() {
+      setLoading(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          setError("Sesi berakhir. Silakan masuk kembali.");
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch('/api/history', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || "Gagal mengambil data histori");
+        }
+
+        const transformed = result.data.map(item => {
+          const statusInfo = getStatusInfo(item.overall_health_score);
+          const rowData = {
+            id: `HG-${new Date(item.inspection_date).getFullYear()}-${item.id.slice(0, 4).toUpperCase()}`,
+            realId: item.id,
+            image: item.image_url || "/next.svg",
+            location: item.ASSETS?.name || "Unknown Asset",
+            subLocation: item.ASSETS?.location || "Unknown Location",
+            date: new Date(item.inspection_date).toLocaleDateString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric'
+            }),
+            timestamp: new Date(item.inspection_date).getTime(),
+            status: statusInfo.label,
+            statusColor: statusInfo.color,
+            reportUrl: item.report_url
+          };
+          return rowData;
+        });
+
+        setData(transformed);
+      } catch (err) {
+        console.error("Fetch history error:", err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchHistory();
+  }, []);
   
   // Logic Filtering dan Sorting
   const filteredData = useMemo(() => {
-    let result = [...MOCK_HISTORY_DATA];
+    let result = [...data];
 
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
@@ -187,6 +102,25 @@ export default function HistoryPage() {
       result = result.filter(item => item.status === filters.status.toUpperCase());
     }
 
+    // Time filtering logic (simplified for now)
+    if (filters.time !== "Semua Waktu") {
+      const now = new Date();
+      let startTime = 0;
+      
+      if (filters.time === "Hari Ini") {
+        startTime = new Date(now.setHours(0,0,0,0)).getTime();
+      } else if (filters.time === "Minggu Ini") {
+        const lastWeek = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        startTime = lastWeek.getTime();
+      } else if (filters.time === "Bulan Ini") {
+        startTime = new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+      } else if (filters.time === "Tahun Ini") {
+        startTime = new Date(now.getFullYear(), 0, 1).getTime();
+      }
+      
+      result = result.filter(item => item.timestamp >= startTime);
+    }
+
     if (filters.sort === "Terbaru") {
       result.sort((a, b) => b.timestamp - a.timestamp);
     } else if (filters.sort === "Terlama") {
@@ -198,13 +132,13 @@ export default function HistoryPage() {
     }
 
     return result;
-  }, [searchQuery, filters]);
+  }, [data, searchQuery, filters]);
 
   const totalEntries = filteredData.length;
   const totalPages = Math.ceil(totalEntries / itemsPerPage);
   
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  const endIndex = Math.min(startIndex + itemsPerPage, totalEntries);
   const currentData = filteredData.slice(startIndex, endIndex);
 
   const handlePageChange = (page) => {
@@ -227,7 +161,6 @@ export default function HistoryPage() {
   const handleExportCSV = (startDate, endDate) => {
     let dataToExport = [...filteredData];
 
-    // Filter berdasarkan rentang tanggal jika ada
     if (startDate || endDate) {
       const start = startDate ? new Date(startDate).getTime() : 0;
       const end = endDate ? new Date(endDate).getTime() : Infinity;
@@ -272,6 +205,32 @@ export default function HistoryPage() {
     link.click();
     document.body.removeChild(link);
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4">
+        <Loader2 className="w-10 h-10 text-primary animate-spin" />
+        <p className="text-gray-500 font-medium">Memuat data histori...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 text-center">
+        <div className="p-4 bg-red-50 text-red-600 rounded-2xl border border-red-100 max-w-md">
+          <p className="font-bold mb-1">Terjadi Kesalahan</p>
+          <p className="text-sm">{error}</p>
+        </div>
+        <button 
+          onClick={() => window.location.reload()}
+          className="px-6 py-2 bg-primary text-white rounded-xl font-bold text-sm"
+        >
+          Coba Lagi
+        </button>
+      </div>
+    );
+  }
 
   return (
     <main className="pb-20">

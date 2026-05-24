@@ -8,7 +8,11 @@ function isMissingEnv(value) {
 
 function validateUrl(value, envName) {
   try {
-    return new URL(value).toString()
+    let urlString = String(value).trim()
+    if (!urlString.startsWith('http://') && !urlString.startsWith('https://')) {
+      urlString = `https://${urlString}`
+    }
+    return new URL(urlString).toString()
   } catch {
     throw new Error(`${envName} is not a valid URL. Received: ${value}`)
   }

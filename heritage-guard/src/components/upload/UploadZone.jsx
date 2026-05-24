@@ -13,6 +13,7 @@ import {
   MapPin,
   ArrowRight,
 } from "lucide-react";
+import { supabase } from "@/utils/supabase";
 import useScanStore from "@/store/useScanStore";
 import ScanCanvas from "./ScanCanvas";
 
@@ -156,11 +157,24 @@ export default function UploadZone() {
     });
     startScan();
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       const fd = new FormData();
       fd.append("file", imageFile);
       fd.append("asset_name", buildingName.trim());
       fd.append("asset_location", location.trim());
-      const res = await fetch(API_URL, { method: "POST", body: fd });
+
+      const headers = {};
+      if (session?.access_token) {
+        headers["Authorization"] = `Bearer ${session.access_token}`;
+      }
+
+      const res = await fetch(API_URL, { 
+        method: "POST", 
+        body: fd,
+        headers: headers
+      });
+      
       if (!res.ok) {
         let backendMessage = "";
         try {

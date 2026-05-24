@@ -104,43 +104,53 @@ async function upsertAsset(supabase, parsedBody, inspectionId) {
 }
 
 async function resolveUserRecord(supabase, parsedBody, authUser) {
+  // 1. Explicit user_id from body (highest priority, usually for admin or testing)
   if (parsedBody.user_id) {
     const explicitUser = await supabase.from('USERS').select('*').eq('id', parsedBody.user_id).maybeSingle()
 
-    if (explicitUser.error) {
-      throw explicitUser.error
-    }
-
-    if (explicitUser.data) {
-      return explicitUser.data
-    }
+    if (explicitUser.error) throw explicitUser.error
+    if (explicitUser.data) return explicitUser.data
   }
 
-  const lookupEmail = parsedBody.user_email || authUser?.email || null
+  // 2. Auth user from bearer token (Standard for real usage)
+  if (authUser) {
+    const matchedUser = await supabase.from('USERS').select('*').eq('id', authUser.id).maybeSingle()
 
+    if (matchedUser.error) throw matchedUser.error
+    
+    // If user exists in public.USERS, return it
+    if (matchedUser.data) return matchedUser.data
+
+    // If not, auto-create it (First time login from Google OAuth)
+    const newUserPayload = {
+      id: authUser.id,
+      full_name: authUser.user_metadata?.full_name || authUser.email.split('@')[0],
+      email: authUser.email,
+      role: 'user'
+    }
+
+    const createdUser = await supabase.from('USERS').insert(newUserPayload).select('*').single()
+
+    if (createdUser.error) throw createdUser.error
+    return createdUser.data
+  }
+
+  // 3. Fallback to lookup by email if provided in body
+  const lookupEmail = parsedBody.user_email || null
   if (lookupEmail) {
     const matchedUser = await supabase.from('USERS').select('*').eq('email', lookupEmail).maybeSingle()
 
-    if (matchedUser.error) {
-      throw matchedUser.error
-    }
-
-    if (matchedUser.data) {
-      return matchedUser.data
-    }
+    if (matchedUser.error) throw matchedUser.error
+    if (matchedUser.data) return matchedUser.data
   }
 
+  // 4. Ultimate fallback (Old behavior)
   const fallbackUser = await supabase.from('USERS').select('*').order('created_at', { ascending: true }).limit(1).maybeSingle()
 
-  if (fallbackUser.error) {
-    throw fallbackUser.error
-  }
+  if (fallbackUser.error) throw fallbackUser.error
+  if (fallbackUser.data) return fallbackUser.data
 
-  if (fallbackUser.data) {
-    return fallbackUser.data
-  }
-
-  throw new Error('No USERS row is available. Create at least one application user in the USERS table first.')
+  throw new Error('No USERS row is available and no authenticated user found.')
 }
 
 async function getOrCreateModel(supabase, parsedBody) {
