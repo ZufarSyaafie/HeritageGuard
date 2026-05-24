@@ -1,0 +1,11 @@
+node_modules
+.next
+.git
+.env
+.env.local
+npm-debug.log
+Dockerfile
+docker-compose.yml
+nginx.conf
+DEPLOYMENT_AWS_EC2.md
+README.md

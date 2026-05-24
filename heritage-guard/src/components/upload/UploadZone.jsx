@@ -12,6 +12,7 @@ import {
   Building2,
   MapPin,
   ArrowRight,
+  ExternalLink,
 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import useScanStore from "@/store/useScanStore";

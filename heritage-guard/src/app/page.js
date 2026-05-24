@@ -436,14 +436,9 @@ const STATS = [
 const mono = { fontFamily: "'IBM Plex Mono', monospace" };
 
 export default function LandingPage() {
-	const [mounted, setMounted] = useState(false);
-	useEffect(() => {
-		setMounted(true);
-	}, []);
-
 	const fadeIn = (delay = 0) => ({
-		opacity: mounted ? 1 : 0,
-		transform: mounted ? "translateY(0)" : "translateY(18px)",
+		opacity: 1,
+		transform: "translateY(0)",
 		transition: `opacity 0.8s ease ${delay}s, transform 0.8s ease ${delay}s`,
 	});
 
