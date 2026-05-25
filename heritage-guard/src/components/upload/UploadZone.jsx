@@ -18,7 +18,8 @@ import { supabase } from "@/utils/supabase";
 import useScanStore from "@/store/useScanStore";
 import ScanCanvas from "./ScanCanvas";
 
-const API_URL = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL || "/api/inference";
+const API_BASE = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL || "";
+const API_URL = `${API_BASE}/api/inference`;
 
 const DETECTION_THEME = {
   crack: {
