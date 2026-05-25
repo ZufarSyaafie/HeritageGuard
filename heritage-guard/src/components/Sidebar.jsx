@@ -25,8 +25,23 @@ export default function Sidebar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      setUser(user);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+
+      setUser(session.user);
+
+      // Sync role from DB — fixes cases where role was set directly in DB
+      const res = await fetch('/api/me', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (res.ok) {
+        const { synced } = await res.json();
+        if (synced) {
+          // Role was out of sync — refresh JWT so user_metadata is updated
+          const { data: { session: refreshed } } = await supabase.auth.refreshSession();
+          if (refreshed) setUser(refreshed.user);
+        }
+      }
     };
     fetchUser();
   }, []);
