@@ -10,19 +10,19 @@ export default function Header() {
   const router = useRouter();
   const [user, setUser] = useState(null);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-  const [theme, setTheme] = useState('light');
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === 'undefined') return 'light';
+    return localStorage.getItem('theme') || 'light';
+  });
   const dropdownRef = useRef(null);
 
-  // 1. Initial Load from LocalStorage
+  // 1. Initial Load
   useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setUser(user);
     };
     fetchUser();
-
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
 
     // Close dropdown on click outside
     const handleClickOutside = (event) => {

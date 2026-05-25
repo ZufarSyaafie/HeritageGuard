@@ -3,26 +3,29 @@
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabase";
-import { ShieldAlert, UserCheck, Search, Users, Loader2 } from "lucide-react";
+import { ShieldAlert, UserCheck, Search, Users, Loader2, X } from "lucide-react";
 
 export default function UserManagementPage() {
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [editTarget, setEditTarget] = useState(null);
+  const [currentUserId, setCurrentUserId] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
     const fetchUsersData = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        
+
         if (!session || session.user.user_metadata?.role !== 'admin') {
           router.replace("/dashboard");
           return;
         }
 
         setIsAdmin(true);
+        setCurrentUserId(session.user.id);
 
         const response = await fetch('/api/admin/users', {
           headers: {
@@ -31,7 +34,7 @@ export default function UserManagementPage() {
         });
 
         const result = await response.json();
-        
+
         if (!response.ok) throw new Error(result.error || "Gagal memuat data pengguna");
 
         setUsers(result.data || []);
@@ -44,6 +47,10 @@ export default function UserManagementPage() {
 
     fetchUsersData();
   }, [router]);
+
+  const handleRoleUpdated = (userId, newRole) => {
+    setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole } : u));
+  };
 
   const filteredUsers = useMemo(() => {
     if (!searchQuery) return users;
@@ -116,7 +123,127 @@ export default function UserManagementPage() {
         />
       </div>
 
-      <UserTable data={filteredUsers} />
+      <UserTable
+        data={filteredUsers}
+        currentUserId={currentUserId}
+        onEditAccess={setEditTarget}
+      />
+
+      {editTarget && (
+        <EditAccessModal
+          user={editTarget}
+          onClose={() => setEditTarget(null)}
+          onSuccess={(userId, newRole) => {
+            handleRoleUpdated(userId, newRole);
+            setEditTarget(null);
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function EditAccessModal({ user, onClose, onSuccess }) {
+  const [selectedRole, setSelectedRole] = useState(user.role);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState(null);
+
+  const roles = [
+    { value: 'admin', label: 'Administrator', desc: 'Akses penuh ke semua fitur dan manajemen pengguna' },
+    { value: 'ahli', label: 'Tenaga Ahli', desc: 'Dapat melakukan inspeksi dan melihat semua laporan' },
+    { value: 'pemerintah', label: 'Pemerintah', desc: 'Akses baca laporan dan data inspeksi' },
+    { value: 'swasta', label: 'Swasta', desc: 'Akses terbatas pada aset milik sendiri' },
+  ];
+
+  const handleSave = async () => {
+    if (selectedRole === user.role) {
+      onClose();
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const response = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: user.id, role: selectedRole }),
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Gagal memperbarui role');
+      onSuccess(user.id, selectedRole);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative bg-white dark:bg-dark-surface rounded-3xl shadow-2xl border border-gray-100 dark:border-dark-border w-full max-w-md p-8 space-y-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h2 className="text-xl font-extrabold text-gray-900 dark:text-dark-text">Edit Akses Pengguna</h2>
+            <p className="text-sm text-gray-500 dark:text-dark-text-muted mt-1">{user.full_name || user.email}</p>
+          </div>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-dark-text transition-colors mt-0.5">
+            <X size={20} />
+          </button>
+        </div>
+
+        <div className="space-y-3">
+          {roles.map(r => (
+            <label
+              key={r.value}
+              className={`flex items-start gap-4 p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                selectedRole === r.value
+                  ? 'border-primary bg-primary/5 dark:bg-primary/10'
+                  : 'border-gray-100 dark:border-dark-border hover:border-gray-200 dark:hover:border-gray-600'
+              }`}
+            >
+              <input
+                type="radio"
+                name="role"
+                value={r.value}
+                checked={selectedRole === r.value}
+                onChange={() => setSelectedRole(r.value)}
+                className="mt-0.5 accent-primary"
+              />
+              <div>
+                <p className="text-sm font-bold text-gray-900 dark:text-dark-text">{r.label}</p>
+                <p className="text-[11px] text-gray-500 dark:text-dark-text-muted mt-0.5">{r.desc}</p>
+              </div>
+            </label>
+          ))}
+        </div>
+
+        {error && (
+          <p className="text-sm text-red-500 font-medium">{error}</p>
+        )}
+
+        <div className="flex gap-3 pt-2">
+          <button
+            onClick={onClose}
+            disabled={saving}
+            className="flex-1 py-3 rounded-2xl border border-gray-200 dark:border-dark-border text-sm font-bold text-gray-600 dark:text-dark-text-muted hover:bg-gray-50 dark:hover:bg-dark-bg transition-colors"
+          >
+            Batal
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 py-3 rounded-2xl bg-primary text-white text-sm font-bold hover:bg-primary/90 transition-colors flex items-center justify-center gap-2 disabled:opacity-60"
+          >
+            {saving && <Loader2 size={14} className="animate-spin" />}
+            {saving ? 'Menyimpan...' : 'Simpan Perubahan'}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
@@ -138,7 +265,7 @@ function StatsCard({ icon, label, value, subLabel, color }) {
   );
 }
 
-function UserTable({ data }) {
+function UserTable({ data, currentUserId, onEditAccess }) {
   const roleDisplay = {
     'admin': 'Administrator',
     'pemerintah': 'Pemerintah',
@@ -196,9 +323,18 @@ function UserTable({ data }) {
                     </div>
                   </td>
                   <td className="px-8 py-5 text-right">
-                    <button className="text-[11px] font-bold text-primary hover:underline uppercase tracking-wider transition-colors">
-                      Edit Akses
-                    </button>
+                    {user.id === currentUserId ? (
+                      <span className="text-[11px] font-bold text-gray-300 dark:text-gray-600 uppercase tracking-wider cursor-not-allowed">
+                        Edit Akses
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => onEditAccess(user)}
+                        className="text-[11px] font-bold text-primary hover:underline uppercase tracking-wider transition-colors"
+                      >
+                        Edit Akses
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))
