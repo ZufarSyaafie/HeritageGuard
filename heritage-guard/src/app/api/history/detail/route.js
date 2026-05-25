@@ -19,8 +19,9 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    let user;
     try {
-      await getUserFromBearerToken(authHeader);
+      user = await getUserFromBearerToken(authHeader);
     } catch (error) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
@@ -29,6 +30,10 @@ export async function GET(req) {
 
     if (error || !data) {
       return NextResponse.json({ error: error || 'Not found' }, { status: 404 });
+    }
+
+    if (data.user_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     // Generate access URLs for images

@@ -135,22 +135,7 @@ async function resolveUserRecord(supabase, parsedBody, authUser) {
     return createdUser.data
   }
 
-  // 3. Fallback to lookup by email if provided in body
-  const lookupEmail = parsedBody.user_email || null
-  if (lookupEmail) {
-    const matchedUser = await supabase.from('USERS').select('*').eq('email', lookupEmail).maybeSingle()
-
-    if (matchedUser.error) throw matchedUser.error
-    if (matchedUser.data) return matchedUser.data
-  }
-
-  // 4. Ultimate fallback (Old behavior)
-  const fallbackUser = await supabase.from('USERS').select('*').order('created_at', { ascending: true }).limit(1).maybeSingle()
-
-  if (fallbackUser.error) throw fallbackUser.error
-  if (fallbackUser.data) return fallbackUser.data
-
-  throw new Error('No USERS row is available and no authenticated user found.')
+  throw new Error('Authentication required.')
 }
 
 async function getOrCreateModel(supabase, parsedBody) {

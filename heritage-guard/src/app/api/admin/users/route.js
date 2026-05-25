@@ -18,15 +18,22 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    // Verify if user is actually an admin
-    if (authUser.user_metadata?.role !== 'admin') {
+    const supabaseAdmin = getSupabaseAdminClient();
+
+    // Verify admin role from USERS table (not user_metadata — can be spoofed by client)
+    const { data: adminCheck } = await supabaseAdmin
+      .from('USERS')
+      .select('role')
+      .eq('id', authUser.id)
+      .single();
+
+    if (!adminCheck || adminCheck.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden: Admin access only' }, { status: 403 });
     }
 
-    const supabaseAdmin = getSupabaseAdminClient();
     const { data, error } = await supabaseAdmin
       .from('USERS')
-      .select('*')
+      .select('id, email, full_name, role, created_at')
       .order('created_at', { ascending: false });
 
     if (error) {
