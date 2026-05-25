@@ -25,7 +25,8 @@ jobs:
             --build-arg NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
             --build-arg NEXT_PUBLIC_HERITAGEGUARD_API_URL=https://heritageguard.azurewebsites.net \
             -t heritageguardacr.azurecr.io/heritageguard:latest \
-            -t heritageguardacr.azurecr.io/heritageguard:${{ github.sha }} .
+            -t heritageguardacr.azurecr.io/heritageguard:${{ github.sha }} \
+            ./heritage-guard
           docker push heritageguardacr.azurecr.io/heritageguard:latest
           docker push heritageguardacr.azurecr.io/heritageguard:${{ github.sha }}
 
