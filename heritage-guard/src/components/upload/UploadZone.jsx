@@ -10,13 +10,13 @@ import {
   AlertCircle,
   Loader2,
   Building2,
-  MapPin,
   ArrowRight,
   ExternalLink,
 } from "lucide-react";
 import { supabase } from "@/utils/supabase";
 import useScanStore from "@/store/useScanStore";
 import ScanCanvas from "./ScanCanvas";
+import LocationPicker from "./LocationPicker";
 
 const API_BASE = process.env.NEXT_PUBLIC_HERITAGEGUARD_API_URL || "";
 const API_URL = `${API_BASE}/api/inference`;
@@ -345,10 +345,7 @@ export default function UploadZone() {
 
           <div className="space-y-2">
             <label className="text-xs font-black text-gray-400 dark:text-dark-text-muted uppercase tracking-widest ml-1 transition-colors">Lokasi / Area</label>
-            <div className="relative">
-              <MapPin size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 dark:text-dark-text-muted" />
-              <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder="Magelang, Jawa Tengah" className="w-full bg-gray-50 dark:bg-dark-bg border border-transparent dark:border-dark-border focus:bg-white dark:focus:bg-dark-surface focus:border-gray-200 dark:focus:border-primary focus:ring-4 focus:ring-blue-100/50 dark:focus:ring-primary/10 rounded-xl py-3.5 pl-11 pr-4 text-sm outline-none transition-all font-semibold placeholder:font-normal placeholder:text-gray-300 dark:text-dark-text dark:placeholder:text-gray-600" />
-            </div>
+            <LocationPicker value={location} onChange={setLocation} />
           </div>
         </div>
       )}
