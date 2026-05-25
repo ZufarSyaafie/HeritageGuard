@@ -17,6 +17,35 @@ import { getSupabaseAdminClient, getUserFromBearerToken } from '@/lib/server/sup
 
 export const runtime = 'nodejs'
 
+// In-memory rate limiter: 5 requests per user per minute
+const rateLimitMap = new Map()
+function checkRateLimit(key) {
+  const now = Date.now()
+  const windowMs = 60_000
+  const max = 5
+  const entry = rateLimitMap.get(key) || { count: 0, resetAt: now + windowMs }
+  if (now > entry.resetAt) {
+    entry.count = 0
+    entry.resetAt = now + windowMs
+  }
+  entry.count++
+  rateLimitMap.set(key, entry)
+  return entry.count <= max
+}
+
+const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+const MAGIC_BYTES = [
+  { mime: 'image/jpeg', bytes: [0xff, 0xd8, 0xff] },
+  { mime: 'image/png', bytes: [0x89, 0x50, 0x4e, 0x47] },
+  { mime: 'image/gif', bytes: [0x47, 0x49, 0x46, 0x38] },
+  { mime: 'image/webp', bytes: [0x52, 0x49, 0x46, 0x46] },
+]
+function validateImageMagicBytes(buffer) {
+  return MAGIC_BYTES.some(({ bytes }) =>
+    bytes.every((b, i) => buffer[i] === b)
+  )
+}
+
 const inferenceRequestSchema = z.object({
   asset_id: z.string().uuid().optional(),
   user_id: z.string().uuid().optional(),
@@ -45,6 +74,7 @@ async function callInferenceModel(fileBuffer, fileName, mimeType) {
   const response = await fetch(getInferenceUrl(), {
     method: 'POST',
     body: form,
+    signal: AbortSignal.timeout(60_000),
   })
 
   const rawText = await response.text()
@@ -172,6 +202,12 @@ async function getOrCreateModel(supabase, parsedBody) {
 
 export async function POST(req) {
   try {
+    // Rate limit by user IP
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || 'unknown'
+    if (!checkRateLimit(ip)) {
+      return NextResponse.json({ error: 'Too many requests. Wait 1 minute.' }, { status: 429 })
+    }
+
     const formData = await req.formData()
     const fileField = formData.get('file')
 
@@ -179,12 +215,18 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Missing image file. Send multipart/form-data with field name "file".' }, { status: 400 })
     }
 
-    if (!fileField.type || !fileField.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'Only image uploads are allowed.' }, { status: 400 })
+    if (!fileField.type || !ALLOWED_MIME.includes(fileField.type)) {
+      return NextResponse.json({ error: 'Only JPEG, PNG, WebP, or GIF images are allowed.' }, { status: 400 })
     }
 
     if (fileField.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: 'File too large. Maximum size is 10MB.' }, { status: 400 })
+    }
+
+    // Validate actual file content via magic bytes (prevent MIME spoofing)
+    const headerBuffer = Buffer.from(await fileField.slice(0, 8).arrayBuffer())
+    if (!validateImageMagicBytes(headerBuffer)) {
+      return NextResponse.json({ error: 'File content does not match an allowed image format.' }, { status: 400 })
     }
 
     const parsedBody = inferenceRequestSchema.safeParse(Object.fromEntries(formData.entries()))
