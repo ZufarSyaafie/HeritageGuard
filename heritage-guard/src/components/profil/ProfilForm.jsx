@@ -42,9 +42,8 @@ export default function ProfilForm({ initialUser }) {
     setError("");
     try {
       const { error: updateError } = await supabase.auth.updateUser({
-        data: { 
+        data: {
           full_name: form.name,
-          role: form.role,
           institusi: form.institusi
         }
       });
@@ -115,15 +114,11 @@ export default function ProfilForm({ initialUser }) {
           />
         </FormField>
         <FormField label="Peran">
-          <select
-            className={`${inputCls} appearance-none`}
-            value={form.role}
-            onChange={(e) => setForm({ ...form, role: e.target.value })}
-          >
-            {ROLES.map((r) => (
-              <option key={r.value} value={r.value}>{r.label}</option>
-            ))}
-          </select>
+          <input
+            className={`${inputCls} cursor-not-allowed`}
+            value={ROLES.find(r => r.value === form.role)?.label || form.role}
+            disabled
+          />
         </FormField>
 
         <div className="flex items-center gap-3 pt-2">

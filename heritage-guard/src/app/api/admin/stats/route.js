@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAdminStats } from '@/api/admin';
-import { getUserFromBearerToken } from '@/lib/server/supabase';
+import { getUserFromBearerToken, getSupabaseAdminClient } from '@/lib/server/supabase';
 
 export const runtime = 'nodejs';
 
@@ -18,8 +18,19 @@ export async function GET(req) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
-    // Verify if user is actually an admin
-    if (user.user_metadata?.role !== 'admin') {
+    if (!user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Verify admin role from DB (not user_metadata — can be stale)
+    const supabaseAdmin = getSupabaseAdminClient();
+    const { data: adminCheck } = await supabaseAdmin
+      .from('USERS')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (!adminCheck || adminCheck.role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden: Admin access only' }, { status: 403 });
     }
 

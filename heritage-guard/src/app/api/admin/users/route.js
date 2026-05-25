@@ -63,6 +63,10 @@ export async function PATCH(req) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
     }
 
+    if (!authUser) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     const supabaseAdmin = getSupabaseAdminClient();
 
     const { data: adminCheck } = await supabaseAdmin
@@ -101,6 +105,11 @@ export async function PATCH(req) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
+
+    // Sync role to Supabase Auth user_metadata so frontend JWT reflects change immediately
+    await supabaseAdmin.auth.admin.updateUserById(userId, {
+      user_metadata: { role },
+    });
 
     return NextResponse.json({ success: true, data });
   } catch (error) {
